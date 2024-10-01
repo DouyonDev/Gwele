@@ -108,13 +108,18 @@ class LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
-                        // Appel au service pour soumettre le formulaire
-                        boutonService.boutonConnexion(
-                          _formKey,
-                          _email,
-                          _password,
-                          context,
-                        );
+                        // Valider et enregistrer le formulaire
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+
+                          // Appel au service pour soumettre le formulaire
+                          boutonService.boutonConnexion(
+                            _formKey,
+                            _email,
+                            _password,
+                            context,
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         textStyle: const TextStyle(fontSize: 20),

@@ -22,7 +22,6 @@ class AdminState extends State<Admin> {
     AjoutReunion(),
     AjoutManager(),
     MesReunions(),
-    AjoutEquipe(),
     Profil(),
   ];
 

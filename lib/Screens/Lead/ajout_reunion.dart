@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../Colors.dart';
-import '../../Models/Tache.dart';
+import '../../Models/Reunion.dart';
 import '../../Services/BoutonService.dart';
 import '../../Services/FichiersService.dart';
 
@@ -20,7 +20,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
   String _lieu = '';
   List<String> _participants = [];
   List<String> _decisions = [];
-  List<Tache> _tachesAssignees = [];
+  List<String> _tachesAssignees = [];
   bool _isCompleted = false;
   String _lead = '';
   List<String> documents = []; // Liste des documents
@@ -345,21 +345,26 @@ class _AjoutReunionState extends State<AjoutReunion> {
                     // Bouton soumettre
                     ElevatedButton(
                       onPressed: () {
+                        // Créer un objet Réunion
+                        Reunion nouvelleReunion = Reunion(
+                          id: '', // L'ID sera généré automatiquement par Firestore
+                          titre: _titre,
+                          description: _description,
+                          dateReunion: _dateReunion,
+                          heureDebut: _heureDebut!,
+                          heureFin: _heureFin!,
+                          participants: _participants,
+                          lieu: _lieu,
+                          isCompleted: _isCompleted,
+                          lead: _lead,
+                          decisions: _decisions,
+                          tachesAssignees: _tachesAssignees,
+                          documents: documents, // Ajout des documents
+                        );
                         BoutonService().btnAjouterReunion(
                             _formKey,
                             context,
-                            _titre,
-                            _description,
-                            _dateReunion,
-                            _heureDebut!,
-                            _heureFin!,
-                            _lieu,
-                            _participants,
-                            _decisions,
-                            _tachesAssignees,
-                            _isCompleted,
-                            _lead,
-                            documents);
+                            nouvelleReunion);
                       },
                       child: const Text('Ajouter la réunion'),
                     ),

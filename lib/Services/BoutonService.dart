@@ -117,37 +117,10 @@ class BoutonService {
   Future<void> btnAjouterReunion(
       GlobalKey<FormState> formKey,
       BuildContext context,
-      String titre,
-      String description,
-      DateTime dateReunion,
-      TimeOfDay heureDebut,
-      TimeOfDay heureFin,
-      String lieu,
-      List<String> participants,
-      List<String> decisions,
-      List<Tache> tachesAssignees,
-      bool isCompleted,
-      String lead,
-      List<String> documents) async {
+      Reunion nouvelleReunion) async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      // Créer un objet Réunion
-      Reunion nouvelleReunion = Reunion(
-        id: '', // L'ID sera généré automatiquement par Firestore
-        titre: titre,
-        description: description,
-        dateReunion: dateReunion,
-        heureDebut: heureDebut,
-        heureFin: heureFin,
-        participants: participants,
-        lieu: lieu,
-        isCompleted: isCompleted,
-        lead: lead,
-        decisions: decisions,
-        tachesAssignees: tachesAssignees,
-        documents: documents, // Ajout des documents
-      );
 
       // Appel au service pour ajouter la réunion
       try {

@@ -7,31 +7,30 @@ class ReunionService {
   final CollectionReference reunionCollection =
       FirebaseFirestore.instance.collection('reunions');
 
-  //Ajouter reunion
+  //FOnction pour ajouter une réunion
   Future<void> ajouterReunion(Reunion reunion, BuildContext context) async {
     try {
+      // Ajout de la réunion dans la collection Firestore
       await reunionCollection.add({
         'titre': reunion.titre,
         'description': reunion.description,
         'dateReunion': reunion.dateReunion.toIso8601String(),
-        'heureDebut': reunion.heureDebut.format(
-            context), // Utilisation de format pour obtenir la chaîne d'heure
-        'heureFin': reunion.heureFin.format(
-            context), // Utilisation de format pour obtenir la chaîne d'heure
-        'participants': reunion.participants,
-        'lieu': reunion.lieu,
-        'isCompleted': reunion.isCompleted,
-        'lead': reunion.lead,
-        'decisions': reunion.decisions,
-        'tachesAssignees':
-            reunion.tachesAssignees.map((tache) => tache.id).toList(),
-        'documents': reunion.documents,
+        'heureDebut': reunion.heureDebut.format(context), // Format de l'heure de début
+        'heureFin': reunion.heureFin.format(context), // Format de l'heure de fin
+        'participants': reunion.participants, // Liste des participants
+        'lieu': reunion.lieu, // Lieu de la réunion
+        'isCompleted': reunion.isCompleted, // Statut de la réunion
+        'lead': reunion.lead, // Responsable de la réunion
+        'decisions': reunion.decisions, // Décisions prises
+        'tachesAssignees': reunion.tachesAssignees, // Liste des tâches assignées (string)
+        'documents': reunion.documents, // Liste des documents associés
       });
     } catch (e) {
       print('Erreur lors de l\'ajout de la réunion: $e');
-      throw e;
+      throw e; // Relance l'erreur pour être gérée au niveau supérieur
     }
   }
+
 
   // Récupérer une liste de réunions
   Stream<List<Reunion>> listeReunions() {
@@ -96,8 +95,7 @@ class ReunionService {
         'isCompleted': reunion.isCompleted,
         'lead': reunion.lead,
         'decisions': reunion.decisions,
-        'tachesAssignees':
-            reunion.tachesAssignees.map((tache) => tache.id).toList(),
+        'tachesAssignees': reunion.tachesAssignees,
       });
     } catch (e) {
       print('Erreur lors de la mise à jour de la réunion: $e');

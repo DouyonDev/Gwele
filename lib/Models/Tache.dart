@@ -1,13 +1,13 @@
 class Tache {
-  final String id; // Identifiant unique de la tâche
-  final String titre; // Titre de la tâche
-  final String description; // Description de la tâche
-  final String assigneA; // Personne à qui la tâche est assignée
-  final DateTime dateLimite; // Date limite pour terminer la tâche
-  final String statut; // Statut (en attente, en cours, terminé)
-  final String priorite; // Priorité (haute, moyenne, basse)
-  final List<String> commentaires; // Liste des commentaires
-  final List<String> documents; // Liste des fichiers attachés
+  final String id;
+  final String titre;
+  final String description;
+  final String assigneA;
+  final DateTime dateLimite;
+  final String statut;
+  final String priorite;
+  final List<String> commentaires;
+  final List<String> documents;
 
   Tache({
     required this.id,
@@ -20,4 +20,33 @@ class Tache {
     required this.commentaires,
     required this.documents,
   });
+
+  // Méthode pour convertir un document Firestore en instance de Tache
+  factory Tache.fromDocument(Map<String, dynamic> doc, String docId) {
+    return Tache(
+      id: docId,
+      titre: doc['titre'] ?? '',
+      description: doc['description'] ?? '',
+      assigneA: doc['assigneA'] ?? '',
+      dateLimite: DateTime.parse(doc['dateLimite'] ?? DateTime.now().toIso8601String()),
+      statut: doc['statut'] ?? '',
+      priorite: doc['priorite'] ?? '',
+      commentaires: List<String>.from(doc['commentaires'] ?? []),
+      documents: List<String>.from(doc['documents'] ?? []),
+    );
+  }
+
+  // Méthode pour convertir une instance de Tache en format Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'titre': titre,
+      'description': description,
+      'assigneA': assigneA,
+      'dateLimite': dateLimite.toIso8601String(),
+      'statut': statut,
+      'priorite': priorite,
+      'commentaires': commentaires,
+      'documents': documents,
+    };
+  }
 }

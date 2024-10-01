@@ -16,3 +16,14 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+buildscript {
+    repositories {
+        google() // Ce dépôt est nécessaire pour les services Google
+        mavenCentral() // Ce dépôt est utilisé pour certaines dépendances
+    }
+    dependencies {
+        // ...
+        classpath 'com.google.gms:google-services:4.4.2' // Vérifie la dernière version
+        //classpath 'com.android.tools.build:gradle:7.2.1' // Assure-toi que tu utilises une version compatible
+    }
+}
