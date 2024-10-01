@@ -266,6 +266,8 @@ class BoutonService {
     formKey.currentState?.save(); // Sauvegarde les valeurs du formulaire
 
     try {
+      final managerId = FirebaseAuth.instance.currentUser?.uid;
+      nouvelleEquipe.managerId = managerId!;
       // Appeler le service pour ajouter l'équipe
       await EquipeService().ajouterEquipe(nouvelleEquipe);
       // Afficher un message de succès

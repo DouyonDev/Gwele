@@ -5,6 +5,7 @@ class Equipe {
   String nom;
   String leaderId; // ID du leader
   String? secondId; // ID du second (peut être nul)
+  String managerId;
   List<String> membres; // Liste des IDs des membres de l'équipe
   DateTime? dateCreation; // Date de création de l'équipe
 
@@ -14,6 +15,7 @@ class Equipe {
     required this.nom,
     required this.leaderId,
     this.secondId,
+    required this.managerId,
     required this.membres,
     this.dateCreation,
   });
@@ -25,6 +27,7 @@ class Equipe {
       nom: doc['nom'] ?? '', // Valeur par défaut si le champ n'existe pas
       leaderId: doc['leaderId'] ?? '', // Valeur par défaut
       secondId: doc['secondId'], // Peut être null
+      managerId: doc['secondId'] ?? '', // Peut être null
       membres: doc['membres'] != null
           ? List<String>.from(doc['membres'])
           : [], // Si pas de membres, retourne une liste vide
@@ -40,6 +43,7 @@ class Equipe {
       'nom': nom,
       'leaderId': leaderId,
       'secondId': secondId,
+      'managerId': managerId,
       'membres': membres,
       'dateCreation': dateCreation != null ? Timestamp.fromDate(dateCreation!) : null,
     };

@@ -175,6 +175,7 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                             nom: _nomEquipe,
                             leaderId: _leaderId,
                             secondId: _secondId,
+                            managerId: '',
                             membres: [],
                             dateCreation: DateTime.now(),
                           );
