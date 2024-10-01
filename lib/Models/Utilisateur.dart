@@ -1,13 +1,13 @@
 class Utilisateur {
-  late final String id;
-  final String nom;
-  final String prenom;
-  final String role;
-  final String email;
-  final String imageUrl;
+  String id;
+  String nom;
+  String prenom;
+  String role;
+  String email;
+  String imageUrl;
   String userMere;
-  final List<String> tachesAssignees;
-  final List<String> reunions;
+  List<String> tachesAssignees;
+  List<String> reunions;
 
   Utilisateur({
     required this.id,

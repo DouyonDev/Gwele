@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Services/UtilisateurService.dart';
 
 import '../../Colors.dart';
 import '../../Models/Equipe.dart';
@@ -17,35 +19,60 @@ class AjoutEquipeState extends State<AjoutEquipe> {
   String _leaderId = '';
   String _secondId = '';
 
-  Map<String, dynamic>? selectedLeader;
-  Map<String, dynamic>? selectedSecond;
-
-  // Fonction pour récupérer la liste des participants depuis Firestore
-  Future<QuerySnapshot> fetchParticipants() async {
-    return await FirebaseFirestore.instance.collection('utilisateurs').get();
-  }
+  Utilisateur? selectedLeader;
+  Utilisateur? selectedSecond;
 
   // Fonction pour sélectionner le leader
-  void onLeaderSelected(Map<String, dynamic> participant) {
-    setState(() {
-      selectedLeader = participant;
-      _leaderId = participant['id'];
+  // Fonction pour sélectionner le leader
+  void onLeaderSelected(String participantID) async {
+    try {
+      Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(participantID);
+      if (utilisateur != null) {
+        setState(() {
+          selectedLeader = utilisateur;
+          _leaderId = participantID;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Leader sélectionné: ${selectedLeader?.prenom} ${selectedLeader?.nom}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Utilisateur non trouvé')),
+        );
+      }
+    } catch (e) {
+      print('Erreur lors de la sélection du leader: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Leader sélectionné: ${participant['nom']}')),
+        SnackBar(content: Text('Erreur lors de la récupération du leader')),
       );
-    });
+    }
   }
 
-  // Fonction pour sélectionner l'adjoint
-  void onAdjointSelected(Map<String, dynamic> participant) {
-    setState(() {
-      selectedSecond = participant;
-      _secondId = participant['id'];
+// Fonction pour sélectionner l'adjoint
+  void onAdjointSelected(String participantID) async {
+    try {
+      Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(participantID);
+      if (utilisateur != null) {
+        setState(() {
+          selectedSecond = utilisateur;
+          _secondId = participantID;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Adjoint sélectionné: ${selectedSecond?.prenom} ${selectedSecond?.nom}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Utilisateur non trouvé')),
+        );
+      }
+    } catch (e) {
+      print('Erreur lors de la sélection de l\'adjoint: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Adjoint sélectionné: ${participant['nom']}')),
+        SnackBar(content: Text('Erreur lors de la récupération de l\'adjoint')),
       );
-    });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +112,6 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                           title: 'Choisissez le leader du groupe',
                           buttonText: 'Choisir le leader',
                           onParticipantSelected: onLeaderSelected,
-                          fetchParticipants: fetchParticipants,
                           setState: () => setState(() {}), // Appel à setState dans le parent
                         ),
                         if (selectedLeader != null)
@@ -95,12 +121,12 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                               children: [
                                 CircleAvatar(
                                   radius: 20.0,
-                                  backgroundImage: selectedLeader?['imageUrl'] != null && selectedLeader!['imageUrl'].isNotEmpty
-                                      ? NetworkImage(selectedLeader!['imageUrl']) // Assurez-vous que l'URL n'est pas vide
+                                  backgroundImage: selectedLeader?.imageUrl != null && selectedLeader!.imageUrl.isNotEmpty
+                                      ? NetworkImage(selectedLeader!.imageUrl) // Assurez-vous que l'URL n'est pas vide
                                       : const AssetImage('assets/images/boy.png'), // Pas besoin de caster ici
                                 ),
                                 Text(
-                                  '${selectedLeader!['prenom'] ?? 'Inconnu'} ${selectedLeader!['nom'] ?? 'Inconnu'}',
+                                  '${selectedLeader?.prenom ?? 'Inconnu'} ${selectedLeader?.nom ?? 'Inconnu'}',
                                   style: const TextStyle(fontSize: 16, color: Colors.black),
                                 ),
                               ],
@@ -116,7 +142,6 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                           title: 'Choisissez l\'adjoint du groupe',
                           buttonText: 'Choisir l\'adjoint',
                           onParticipantSelected: onAdjointSelected,
-                          fetchParticipants: fetchParticipants,
                           setState: () => setState(() {}), // Appel à setState dans le parent
                         ),
                         if (selectedSecond != null)
@@ -126,12 +151,12 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                               children: [
                                 CircleAvatar(
                                   radius: 20.0,
-                                  backgroundImage: selectedSecond?['imageUrl'] != null && selectedSecond!['imageUrl'].isNotEmpty
-                                      ? NetworkImage(selectedSecond!['imageUrl']) // Assurez-vous que l'URL n'est pas vide
+                                  backgroundImage: selectedSecond?.prenom != null && selectedSecond!.nom.isNotEmpty
+                                      ? NetworkImage(selectedSecond!.imageUrl) // Assurez-vous que l'URL n'est pas vide
                                       : const AssetImage('assets/images/boy.png'), // Pas besoin de caster ici
                                 ),
                                 Text(
-                                  '${selectedSecond!['prenom'] ?? 'Inconnu'} ${selectedSecond!['nom'] ?? 'Inconnu'}',
+                                  '${selectedSecond?.prenom ?? 'Inconnu'} ${selectedSecond?.nom ?? 'Inconnu'}',
                                   style: const TextStyle(fontSize: 16, color: Colors.black),
                                 ),
                               ],
@@ -153,6 +178,7 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                             membres: [],
                             dateCreation: DateTime.now(),
                           );
+                          //print(nouvelleEquipe.nom);
                           BoutonService().boutonAjoutEquipe(_formKey, context, nouvelleEquipe);
                         }
                       },

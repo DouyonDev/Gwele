@@ -121,6 +121,8 @@ class BoutonService {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
+      final user = FirebaseAuth.instance.currentUser;
+      nouvelleReunion.lead = user!.uid;
 
       // Appel au service pour ajouter la réunion
       try {

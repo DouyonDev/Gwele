@@ -15,12 +15,11 @@ class Admin extends StatefulWidget {
 
 class AdminState extends State<Admin> {
   int _selectedIndex = 0; // Index pour suivre l'élément sélectionné
-  final PageController _pageController = PageController(); // Controller pour PageView
 
   // Liste des widgets pour chaque page
   static final List<Widget> _pages = <Widget>[
     AjoutReunion(),
-    AjoutManager(),
+    AjoutEquipe(),
     MesReunions(),
     Profil(),
   ];
@@ -28,12 +27,7 @@ class AdminState extends State<Admin> {
   // Méthode pour changer de page à partir de la barre de navigation
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      ); // Anime le changement de page
+      _selectedIndex = index; // Met à jour l'index lorsqu'une icône est cliquée
     });
   }
 
@@ -41,19 +35,11 @@ class AdminState extends State<Admin> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index; // Met à jour l'index lors du glissement
-          });
-        },
-        children: _pages,
-      ),
+      body: _pages[_selectedIndex], // Affiche la page correspondant à l'index sélectionné
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedIndex,
         height: 60.0,
-        items: <Widget>[
+        items: const <Widget>[
           Icon(Icons.home, size: 30, color: Colors.white),
           Icon(Icons.business, size: 30, color: Colors.white),
           Icon(Icons.school, size: 30, color: Colors.white),
@@ -69,11 +55,5 @@ class AdminState extends State<Admin> {
         },
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose(); // Libérer les ressources du contrôleur
-    super.dispose();
   }
 }

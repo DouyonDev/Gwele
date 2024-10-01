@@ -361,6 +361,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
                           tachesAssignees: _tachesAssignees,
                           documents: documents, // Ajout des documents
                         );
+                        //print(nouvelleReunion.lieu);
                         BoutonService().btnAjouterReunion(
                             _formKey,
                             context,

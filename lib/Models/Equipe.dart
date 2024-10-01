@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Equipe {
-  late final String id;
-  final String nom;
-  final String leaderId; // ID du leader
-  final String? secondId; // ID du second (peut être nul)
-  final List<String> membres; // Liste des IDs des membres de l'équipe
-  final DateTime? dateCreation; // Date de création de l'équipe
+  String id;
+  String nom;
+  String leaderId; // ID du leader
+  String? secondId; // ID du second (peut être nul)
+  List<String> membres; // Liste des IDs des membres de l'équipe
+  DateTime? dateCreation; // Date de création de l'équipe
 
   // Constructeur
   Equipe({

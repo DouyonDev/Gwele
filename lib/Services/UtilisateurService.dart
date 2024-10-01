@@ -73,4 +73,23 @@ class UtilisateurService {
       throw e;
     }
   }
+
+  // Récupérer un utilisateur par son ID
+  Future<Utilisateur?> utilisateurParId(String id) async {
+    try {
+      DocumentSnapshot doc = await utilisateurCollection.doc(id).get();
+      if (doc.exists) {
+        // Utilisation de la méthode fromDocument en passant le document et l'ID
+        return Utilisateur.fromDocument(doc.data() as Map<String, dynamic>, doc.id);
+      } else {
+        print('Utilisateur non trouvé pour l\'ID: $id');
+        return null; // Retourne null si l'utilisateur n'existe pas
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération de l\'utilisateur: $e');
+      throw e; // Propager l'erreur pour la gestion à un niveau supérieur
+    }
+  }
+
+
 }

@@ -1,13 +1,13 @@
 class Tache {
-  final String id;
-  final String titre;
-  final String description;
-  final String assigneA;
-  final DateTime dateLimite;
-  final String statut;
-  final String priorite;
-  final List<String> commentaires;
-  final List<String> documents;
+   String id;
+   String titre;
+   String description;
+   String assigneA;
+   DateTime dateLimite;
+   String statut;
+   String priorite;
+   List<String> commentaires;
+   List<String> documents;
 
   Tache({
     required this.id,

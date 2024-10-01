@@ -1,21 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Models/Utilisateur.dart';
 
 import '../../Colors.dart';
 
 // Widget pour afficher le bouton de sélection des participants
 class AffichageBoutonSelectionParticipant extends StatelessWidget {
-  final String title;
-  final String buttonText;
-  final Function(Map<String, dynamic>) onParticipantSelected;
-  final Future<QuerySnapshot> Function() fetchParticipants; // Ajout du paramètre fetchParticipants
-  final Function() setState; // Ajout de setState
+  String title;
+  String buttonText;
+  Function(String) onParticipantSelected;
+  Function() setState; // Ajout de setState
+
+  // Fonction pour récupérer la liste des participants depuis Firestore
+  Future<QuerySnapshot> fetchParticipants() async {
+    return await FirebaseFirestore.instance.collection('utilisateurs').get();
+  }
 
   AffichageBoutonSelectionParticipant({
     required this.title,
     required this.buttonText,
     required this.onParticipantSelected,
-    required this.fetchParticipants, // Ajout de fetchParticipants dans le constructeur
     required this.setState, // Ajout de setState dans le constructeur
   });
 
@@ -35,7 +39,10 @@ class AffichageBoutonSelectionParticipant extends StatelessWidget {
               body: ListView.builder(
                 itemCount: participantsSnapshot.docs.length,
                 itemBuilder: (BuildContext context, int index) {
+                  // Récupérer les données du participant et l'ID du document
                   var participantData = participantsSnapshot.docs[index].data() as Map<String, dynamic>;
+                  var participantId = participantsSnapshot.docs[index].id; // Récupérer l'ID du participant
+
                   return ListTile(
                     leading: const Icon(Icons.person, color: Colors.blueGrey),
                     title: Text(
@@ -45,12 +52,13 @@ class AffichageBoutonSelectionParticipant extends StatelessWidget {
                     subtitle: Text(participantData['email'] ?? 'Email non disponible'),
                     trailing: const Icon(Icons.arrow_forward_ios, color: Colors.blueGrey),
                     onTap: () {
-                      onParticipantSelected(participantData);
-                      setState(); // Appeler setState après la sélection
+                      setState();
+                      onParticipantSelected(participantId); // Passer l'ID du participant
                       Navigator.pop(context); // Fermer la modale après sélection
                     },
                   );
                 },
+
               ),
             );
           },
@@ -61,7 +69,7 @@ class AffichageBoutonSelectionParticipant extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         backgroundColor: primaryColor,
       ),
-      child: Text(buttonText, style: TextStyle(color: thirdColor)),
+      child: Text(buttonText, style: const TextStyle(color: thirdColor)),
     );
   }
 }

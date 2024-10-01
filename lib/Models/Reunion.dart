@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class Reunion {
-  final String id;
-  final String titre;
-  final String description;
-  final DateTime dateReunion;
-  final TimeOfDay heureDebut;
-  final TimeOfDay heureFin;
-  final List<String> participants;
-  final String lieu;
-  final bool isCompleted;
-  final String lead;
-  final List<String> decisions;
-  final List<String> tachesAssignees;
-  final List<String> documents;
+  String id;
+  String titre;
+  String description;
+  DateTime dateReunion;
+  TimeOfDay heureDebut;
+  TimeOfDay heureFin;
+  List<String> participants;
+  String lieu;
+  bool isCompleted;
+  String lead;
+  List<String> decisions;
+  List<String> tachesAssignees;
+  List<String> documents;
 
   Reunion({
     required this.id,
