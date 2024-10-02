@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:gwele/Screens/Admin/ajout_Manager.dart';
+import 'package:gwele/Screens/Lead/ajout_reunion.dart';
+import 'package:gwele/Screens/Participant/ajout_offre.dart';
+import 'package:gwele/Screens/dashbord/const/constant.dart';
 
 import '../Participant/mes_reunions.dart';
 import '../profil.dart';
-import '../Admin/ajout_Manager.dart';
-import '../Lead/ajout_reunion.dart';
 import '../Manager/ajout_equipe.dart';
 
 class Admin extends StatefulWidget {
@@ -20,7 +22,7 @@ class AdminState extends State<Admin> {
   static final List<Widget> _pages = <Widget>[
     AjoutReunion(),
     AjoutEquipe(),
-    MesReunions(),
+    AjoutOffre(),
     Profil(),
   ];
 
@@ -41,11 +43,11 @@ class AdminState extends State<Admin> {
         height: 60.0,
         items: const <Widget>[
           Icon(Icons.home, size: 30, color: Colors.white),
-          Icon(Icons.business, size: 30, color: Colors.white),
+          Icon(Icons.task_alt_outlined, size: 30, color: Colors.white),
           Icon(Icons.school, size: 30, color: Colors.white),
           Icon(Icons.person, size: 30, color: Colors.white),
         ],
-        color: Colors.blue[800]!,
+        color: primaryColor,
         buttonBackgroundColor: Colors.amber[800]!,
         backgroundColor: Colors.transparent,
         animationCurve: Curves.easeInOut,

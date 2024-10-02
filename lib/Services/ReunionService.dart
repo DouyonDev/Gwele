@@ -10,21 +10,29 @@ class ReunionService {
   //FOnction pour ajouter une réunion
   Future<void> ajouterReunion(Reunion reunion, BuildContext context) async {
     try {
+      /*print("lead");
+      print(reunion.lead);
+      print("titre");
+      print(reunion.titre);
+      print("lieu");
+      print(reunion.lieu);
+      print("description");
+      print(reunion.description);
+      print("dateReunion");
+      print(reunion.dateReunion);
+      print("participants");
+      print(reunion.participants);
+      print("isCompleted");
+      print(reunion.isCompleted);
+      print("lieu");
+      print(reunion.lieu);*/
       // Ajout de la réunion dans la collection Firestore
-      await reunionCollection.add({
-        'titre': reunion.titre,
-        'description': reunion.description,
-        'dateReunion': reunion.dateReunion.toIso8601String(),
-        'heureDebut': reunion.heureDebut.format(context), // Format de l'heure de début
-        'heureFin': reunion.heureFin.format(context), // Format de l'heure de fin
-        'participants': reunion.participants, // Liste des participants
-        'lieu': reunion.lieu, // Lieu de la réunion
-        'isCompleted': reunion.isCompleted, // Statut de la réunion
-        'lead': reunion.lead, // Responsable de la réunion
-        'decisions': reunion.decisions, // Décisions prises
-        'tachesAssignees': reunion.tachesAssignees, // Liste des tâches assignées (string)
-        'documents': reunion.documents, // Liste des documents associés
-      });
+      DocumentReference docRef = await reunionCollection.add(reunion.toMap());
+
+      // Mise à jour de l'objet Reunion avec l'ID généré
+      //reunion.id = docRef.id;
+
+      //print('Reunion ajoutée avec succès avec l\'ID: ${reunion.id}');
     } catch (e) {
       print('Erreur lors de l\'ajout de la réunion: $e');
       throw e; // Relance l'erreur pour être gérée au niveau supérieur

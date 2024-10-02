@@ -23,7 +23,6 @@ class AjoutEquipeState extends State<AjoutEquipe> {
   Utilisateur? selectedSecond;
 
   // Fonction pour sélectionner le leader
-  // Fonction pour sélectionner le leader
   void onLeaderSelected(String participantID) async {
     try {
       Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(participantID);
@@ -73,11 +72,25 @@ class AjoutEquipeState extends State<AjoutEquipe> {
     }
   }
 
+  // Fonction pour récupérer la liste des participants depuis Firestore
+  Future<QuerySnapshot> fetchParticipants() async {
+    return await FirebaseFirestore.instance.collection('utilisateurs').get();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: backgroundColor,
+        foregroundColor: secondaryColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: secondaryColor), // Icône retour
+          onPressed: () {
+            Navigator.pop(context); // Retourner à l'écran précédent
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(40.0),
@@ -113,6 +126,7 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                           buttonText: 'Choisir le leader',
                           onParticipantSelected: onLeaderSelected,
                           setState: () => setState(() {}), // Appel à setState dans le parent
+                          fetchParticipants: fetchParticipants,
                         ),
                         if (selectedLeader != null)
                           Padding(
@@ -143,6 +157,7 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                           buttonText: 'Choisir l\'adjoint',
                           onParticipantSelected: onAdjointSelected,
                           setState: () => setState(() {}), // Appel à setState dans le parent
+                          fetchParticipants: fetchParticipants,
                         ),
                         if (selectedSecond != null)
                           Padding(
@@ -180,7 +195,10 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                             dateCreation: DateTime.now(),
                           );
                           //print(nouvelleEquipe.nom);
+                          print(nouvelleEquipe.leaderId);
+                          print(nouvelleEquipe.secondId);
                           BoutonService().boutonAjoutEquipe(_formKey, context, nouvelleEquipe);
+                          _formKey.currentState!.reset();
                         }
                       },
                       style: ElevatedButton.styleFrom(

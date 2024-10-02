@@ -1,23 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import '../Models/Offre.dart';
 
 class OffreService {
   final CollectionReference offreCollection =
-      FirebaseFirestore.instance.collection('offres');
+  FirebaseFirestore.instance.collection('offres');
 
   // Ajouter une offre
   Future<void> ajouterOffre(Offre offre) async {
     try {
-      await offreCollection.doc(offre.id).set({
-        'titre': offre.titre,
-        'description': offre.description,
-        'dateLimite': offre.dateLimite.toIso8601String(),
-        'statut': offre.statut,
-        'documents': offre.documents,
-        'soumisPar': offre.soumisPar,
-        'isExpired': offre.isExpired,
-      });
+      final user = FirebaseAuth.instance.currentUser;
+      offre.soumisPar = user!.uid;
+      // Utiliser la méthode toFirestore de l'instance Offre
+      await offreCollection.add(offre.toMap());
+      print('Offre ajoutée avec l\'ID: ${offre.id}');
     } catch (e) {
       print('Erreur lors de l\'ajout de l\'offre: $e');
       throw e;
@@ -29,16 +26,8 @@ class OffreService {
     try {
       return offreCollection.snapshots().map((snapshot) {
         return snapshot.docs.map((doc) {
-          return Offre(
-            id: doc.id,
-            titre: doc['titre'],
-            description: doc['description'],
-            dateLimite: DateTime.parse(doc['dateLimite']),
-            statut: doc['statut'],
-            documents: List<String>.from(doc['documents']),
-            soumisPar: doc['soumisPar'],
-            isExpired: doc['isExpired'],
-          );
+          // Utiliser la méthode fromFirestore pour chaque document
+          return Offre.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
         }).toList();
       });
     } catch (e) {
@@ -50,15 +39,8 @@ class OffreService {
   // Mise à jour d'une offre
   Future<void> mettreAJourOffre(Offre offre) async {
     try {
-      await offreCollection.doc(offre.id).update({
-        'titre': offre.titre,
-        'description': offre.description,
-        'dateLimite': offre.dateLimite.toIso8601String(),
-        'statut': offre.statut,
-        'documents': offre.documents,
-        'soumisPar': offre.soumisPar,
-        'isExpired': offre.isExpired,
-      });
+      // Utiliser la méthode toFirestore pour la mise à jour
+      await offreCollection.doc(offre.id).update(offre.toMap());
     } catch (e) {
       print('Erreur lors de la mise à jour de l\'offre: $e');
       throw e;

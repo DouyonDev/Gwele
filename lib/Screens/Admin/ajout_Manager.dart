@@ -110,6 +110,7 @@ class AjoutManagerState extends State<AjoutManager> {
                           email: _email,
                           imageUrl: '',
                           userMere: '',
+                          notificationToken: '',
                           tachesAssignees: [],
                           reunions: [], // L'ID sera généré automatiquement par Firestore
                         );

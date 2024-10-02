@@ -52,15 +52,7 @@ class Profil extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: AlignmentDirectional.bottomStart,
-                      end: AlignmentDirectional.topEnd,
-                      colors: [
-                        primaryColor,
-                        Color(0xFF088A9D),
-                      ],
-                      stops: [0.0035, 0.9973],
-                    ),
+                    color: thirdColor,
                     borderRadius: BorderRadius.circular(10.0),
                     boxShadow: [
                       BoxShadow(
@@ -89,7 +81,7 @@ class Profil extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: primaryColor,
                               ),
                             ),
                             Text(
@@ -103,7 +95,7 @@ class Profil extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.edit, color: thirdColor),
+                        icon: const Icon(Icons.edit, color: primaryColor),
                         onPressed: () {
                           // Action lors du clic sur le bouton crayon
                           // Naviguer vers la page de modification du profil

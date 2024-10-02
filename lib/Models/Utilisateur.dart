@@ -6,6 +6,7 @@ class Utilisateur {
   String email;
   String imageUrl;
   String userMere;
+  String notificationToken; // Token FCM pour les notifications
   List<String> tachesAssignees;
   List<String> reunions;
 
@@ -17,6 +18,7 @@ class Utilisateur {
     required this.email,
     required this.imageUrl,
     required this.userMere,
+    required this.notificationToken,
     required this.tachesAssignees,
     required this.reunions,
   });
@@ -31,10 +33,12 @@ class Utilisateur {
       email: doc['email'] ?? '',
       imageUrl: doc['imageUrl'] ?? '',
       userMere: doc['userMere'] ?? '',
+      notificationToken: doc['notificationToken'] ?? '',
       tachesAssignees: List<String>.from(doc['tachesAssignees'] ?? []),
       reunions: List<String>.from(doc['reunions'] ?? []),
     );
   }
+
 
   // Méthode pour convertir une instance d'Utilisateur en format Firestore
   Map<String, dynamic> toMap() {
@@ -45,6 +49,7 @@ class Utilisateur {
       'email': email,
       'userMere': userMere,
       'imageUrl': imageUrl,
+      'notificationToken': notificationToken,
       'tachesAssignees': tachesAssignees,
       'reunions': reunions,
     };

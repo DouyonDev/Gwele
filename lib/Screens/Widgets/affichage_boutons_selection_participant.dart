@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gwele/Models/Utilisateur.dart';
 
 import '../../Colors.dart';
 
@@ -10,17 +9,15 @@ class AffichageBoutonSelectionParticipant extends StatelessWidget {
   String buttonText;
   Function(String) onParticipantSelected;
   Function() setState; // Ajout de setState
+  Function() fetchParticipants;
 
-  // Fonction pour récupérer la liste des participants depuis Firestore
-  Future<QuerySnapshot> fetchParticipants() async {
-    return await FirebaseFirestore.instance.collection('utilisateurs').get();
-  }
 
   AffichageBoutonSelectionParticipant({
     required this.title,
     required this.buttonText,
     required this.onParticipantSelected,
     required this.setState, // Ajout de setState dans le constructeur
+    required this.fetchParticipants,
   });
 
   @override

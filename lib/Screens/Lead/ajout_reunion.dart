@@ -1,8 +1,15 @@
+import 'dart:io';
+import 'package:gwele/Services/FichiersService.dart';
+import 'package:path/path.dart' as path;
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Screens/Widgets/affichage_boutons_selection_participant.dart';
+import 'package:gwele/Services/UtilisateurService.dart';
 import '../../Colors.dart';
 import '../../Models/Reunion.dart';
 import '../../Services/BoutonService.dart';
-import '../../Services/FichiersService.dart';
 
 class AjoutReunion extends StatefulWidget {
   @override
@@ -24,67 +31,37 @@ class _AjoutReunionState extends State<AjoutReunion> {
   bool _isCompleted = false;
   String _lead = '';
   List<String> documents = []; // Liste des documents
+  List<File> fichiersSelectionnes = []; // Liste des fichiers selectionnes
 
-  List<String> allParticipants = [
-    'Alice',
-    'Bob',
-    'Charlie',
-    'Diana'
-  ]; // Exemple
-
-  // Fonction pour sélectionner des participants
-  Future<void> afficherListeParticipants(BuildContext context) async {
-    List<String> selectedParticipants = [
-      ..._participants
-    ]; // Copie de la liste actuelle
-
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Sélectionner les participants"),
-          content: SingleChildScrollView(
-            child: Column(
-              children: allParticipants.map((participant) {
-                return CheckboxListTile(
-                  title: Text(participant),
-                  value: selectedParticipants.contains(participant),
-                  onChanged: (bool? checked) {
-                    setState(() {
-                      if (checked == true) {
-                        selectedParticipants.add(participant);
-                      } else {
-                        selectedParticipants.remove(participant);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Annuler'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Valider'),
-              onPressed: () {
-                setState(() {
-                  _participants = selectedParticipants;
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  // Fonction pour récupérer la liste des participants depuis Firestore
+  Future<QuerySnapshot> fetchParticipants() async {
+    return await FirebaseFirestore.instance.collection('utilisateurs').get();
   }
 
-  final FichiersService fichiersService = FichiersService();
+  // Fonction pour ajouter un membre à la liste des participants
+  void onParticipantSelected(String participantID) async {
+    try {
+      Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(participantID);
+      if (utilisateur != null) {
+        setState(() {
+          _participants.add(participantID);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('membre sélectionné: ${utilisateur.prenom} ${utilisateur.nom}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Utilisateur non trouvé')),
+        );
+      }
+    } catch (e) {
+      print('Erreur lors de la sélection du membre: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la récupération du membre')),
+      );
+    }
+  }
+
   // Sélection de la date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -121,12 +98,22 @@ class _AjoutReunionState extends State<AjoutReunion> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: backgroundColor,
+        foregroundColor: secondaryColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: secondaryColor), // Icône retour
+          onPressed: () {
+            Navigator.pop(context); // Retourner à l'écran précédent
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: <Widget>[
-              const SizedBox(height: 30),
+              //const SizedBox(height: 30),
               Image.asset(
                 "assets/images/logoGwele.png",
                 height: 150,
@@ -203,7 +190,10 @@ class _AjoutReunionState extends State<AjoutReunion> {
                         'Date: ${_dateReunion.toLocal()}',
                         style: const TextStyle(color: secondaryColor),
                       ),
-                      trailing: const Icon(Icons.calendar_today),
+                      trailing: const Icon(
+                          Icons.calendar_today,
+                          color: primaryColor,
+                      ),
                       onTap: () => _selectDate(context),
                     ),
                     const SizedBox(height: 20),
@@ -216,7 +206,10 @@ class _AjoutReunionState extends State<AjoutReunion> {
                             : 'Heure de début: ${_heureDebut!.format(context)}',
                         style: const TextStyle(color: secondaryColor),
                       ),
-                      trailing: const Icon(Icons.access_time),
+                      trailing: const Icon(
+                          Icons.access_time,
+                          color: primaryColor,
+                      ),
                       onTap: () => _selectTime(context, true),
                     ),
                     const SizedBox(height: 20),
@@ -229,7 +222,10 @@ class _AjoutReunionState extends State<AjoutReunion> {
                             : 'Heure de fin: ${_heureFin!.format(context)}',
                         style: const TextStyle(color: secondaryColor),
                       ),
-                      trailing: const Icon(Icons.access_time),
+                      trailing: const Icon(
+                          Icons.access_time,
+                          color: primaryColor,
+                      ),
                       onTap: () => _selectTime(context, false),
                     ),
                     const SizedBox(height: 20),
@@ -255,15 +251,12 @@ class _AjoutReunionState extends State<AjoutReunion> {
                             ),
                             Align(
                               alignment: Alignment.centerRight,
-                              child: IconButton(
-                                onPressed: () =>
-                                    afficherListeParticipants(context),
-                                icon: const Icon(Icons.add),
-                                color: primaryColor,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor.withOpacity(
-                                      0.6), // Exemple avec 50% d'opacité
-                                ),
+                              child: AffichageBoutonSelectionParticipant(
+                                title: 'Choisissez l\'adjoint du groupe',
+                                buttonText: 'Ajouter',
+                                onParticipantSelected: onParticipantSelected,
+                                setState: () => setState(() {}), // Appel à setState dans le parent
+                                fetchParticipants: fetchParticipants,
                               ),
                             ),
                           ],
@@ -272,13 +265,56 @@ class _AjoutReunionState extends State<AjoutReunion> {
                         const SizedBox(height: 10),
                         // Liste des participants sélectionnés
                         Column(
-                          children: _participants.map((participant) {
-                            return ListTile(
-                              leading: const Icon(Icons.person),
-                              title: Text(participant),
+                          children: _participants.map((participantID) {
+                            // Utiliser FutureBuilder pour gérer les données asynchrones
+                            return FutureBuilder<Utilisateur?>(
+                              future: UtilisateurService().utilisateurParId(participantID),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  // Afficher un indicateur de chargement pendant que les données se chargent
+                                  return const ListTile(
+                                    leading: CircularProgressIndicator(),
+                                    title: Text('Chargement...'),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  // En cas d'erreur
+                                  return const ListTile(
+                                    leading: Icon(Icons.error),
+                                    title: Text('Erreur lors du chargement du participant'),
+                                  );
+                                } else if (!snapshot.hasData || snapshot.data == null) {
+                                  // Si aucune donnée n'est disponible
+                                  return const ListTile(
+                                    leading: Icon(Icons.person),
+                                    title: Text('Participant inconnu'),
+                                  );
+                                } else {
+                                  // Si les données sont récupérées avec succès
+                                  Utilisateur? participant = snapshot.data;
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 20.0,
+                                      backgroundImage: participant?.imageUrl != null && participant!.imageUrl.isNotEmpty
+                                          ? NetworkImage(participant.imageUrl)
+                                          : const AssetImage('assets/images/boy.png') as ImageProvider,
+                                    ), // Icône avant le nom du participant
+                                    title: Text('${participant?.prenom ?? 'Inconnu'} ${participant?.nom ?? 'Inconnu'}'), // Nom du participant
+                                    trailing: IconButton(
+                                      icon: const Icon(Icons.remove_circle_outline), // Bouton pour supprimer
+                                      onPressed: () {
+                                        // Action pour supprimer un participant de la liste
+                                        setState(() {
+                                          _participants.remove(participantID);
+                                        });
+                                      },
+                                    ),
+                                  );
+                                }
+                              },
                             );
                           }).toList(),
-                        ),
+                        )
+
                       ],
                     ),
 
@@ -307,10 +343,10 @@ class _AjoutReunionState extends State<AjoutReunion> {
                               // Aligner l'icône à droite
                               alignment: Alignment.centerRight,
                               child: IconButton(
-                                onPressed: () {
-                                  this.documents = BoutonService()
-                                      .selectionnerEtUploaderFichier(
-                                          context, documents) as List<String>;
+                                onPressed: () async {
+                                  fichiersSelectionnes = await BoutonService()
+                                      .selectionnerEtAfficherFichier(
+                                          context, setState, fichiersSelectionnes);
                                 },
                                 icon: const Icon(Icons.add),
                                 style: ElevatedButton.styleFrom(
@@ -325,26 +361,39 @@ class _AjoutReunionState extends State<AjoutReunion> {
                         ),
 
                         const SizedBox(height: 10),
-                        // Liste des documents uploadés
                         Column(
-                          children: documents.map((docName) {
-                            // Découper le nom du fichier à partir du tiret
-                            String shortenedName = docName.split(':').first;
-
+                          children: fichiersSelectionnes.map((file) {
+                            // Obtenir le nom du fichier à partir du chemin
+                            String fileName = path.basename(file.path); // Extraire le nom du fichier
                             return ListTile(
-                              leading: const Icon(Icons.insert_drive_file),
-                              title: Text(
-                                shortenedName, // Afficher la partie après le tiret
+                              leading: const Icon(Icons.insert_drive_file), // Icône pour le fichier
+                              title: Text(fileName), // Affiche uniquement le nom du fichier
+                              trailing: IconButton(
+                                icon: const Icon(Icons.remove_circle_outline), // Bouton pour supprimer
+                                onPressed: () {
+                                  // Action pour supprimer un document de la liste
+                                  setState(() {
+                                    fichiersSelectionnes.remove(file);
+                                  });
+                                },
                               ),
                             );
                           }).toList(),
                         ),
+
                       ],
                     ),
 
                     // Bouton soumettre
                     ElevatedButton(
                       onPressed: () {
+
+                        fichiersSelectionnes.map((file) async {
+                          String fileName = path.basename(file.path);
+                          String fichierUrl = await FichiersService().uploaderFichierReunion(file, fileName);
+                          documents.add(fichierUrl);
+                        }).toList();
+
                         // Créer un objet Réunion
                         Reunion nouvelleReunion = Reunion(
                           id: '', // L'ID sera généré automatiquement par Firestore
@@ -361,11 +410,13 @@ class _AjoutReunionState extends State<AjoutReunion> {
                           tachesAssignees: _tachesAssignees,
                           documents: documents, // Ajout des documents
                         );
-                        //print(nouvelleReunion.lieu);
+                        //print(nouvelleReunion.titre);
                         BoutonService().btnAjouterReunion(
                             _formKey,
                             context,
-                            nouvelleReunion);
+                            nouvelleReunion
+                        );
+                        _formKey.currentState!.reset();
                       },
                       child: const Text('Ajouter la réunion'),
                     ),
@@ -379,3 +430,4 @@ class _AjoutReunionState extends State<AjoutReunion> {
     );
   }
 }
+

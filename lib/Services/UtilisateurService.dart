@@ -36,6 +36,7 @@ class UtilisateurService {
             email: doc['email'],
             imageUrl: doc['imageUrl'],
             userMere: doc['userMere'],
+            notificationToken: doc['notificationToken'],
             tachesAssignees: List<String>.from(doc['tachesAssignees']),
             reunions: List<String>.from(doc['reunions']),
           );

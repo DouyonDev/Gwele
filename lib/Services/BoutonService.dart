@@ -1,15 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:gwele/Services/NotificationService.dart';
 
 import '../Models/Equipe.dart';
 import '../Models/Reunion.dart';
-import '../Models/Tache.dart';
 import '../Models/Utilisateur.dart';
 import '../Screens/Widgets/message_modale.dart';
-import '../Screens/authentication_screen.dart';
 import 'AuthService.dart';
 import 'EquipeService.dart';
 import 'FichiersService.dart';
@@ -22,7 +23,6 @@ class BoutonService {
 
   final AuthService authService = AuthService();
   final ReunionService reunionService = ReunionService();
-  final FichiersService fichiersService = FichiersService();
 
   // Bouton pour la connexion
   Future<void> boutonConnexion(GlobalKey<FormState> formKey, String email,
@@ -124,13 +124,38 @@ class BoutonService {
       final user = FirebaseAuth.instance.currentUser;
       nouvelleReunion.lead = user!.uid;
 
+      /*print("lead");
+      print(nouvelleReunion.lead);
+      print("titre");
+      print(nouvelleReunion.titre);
+      print("lieu");
+      print(nouvelleReunion.lieu);
+      print("description");
+      print(nouvelleReunion.description);
+      print("dateReunion");
+      print(nouvelleReunion.dateReunion);
+      print("participants");
+      print(nouvelleReunion.participants);
+      print("isCompleted");
+      print(nouvelleReunion.isCompleted);
+      print("lieu");
+      print(nouvelleReunion.lieu);*/
+
       // Appel au service pour ajouter la réunion
       try {
         await reunionService.ajouterReunion(nouvelleReunion, context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Réunion ajoutée avec succès !')),
         );
-        //Navigator.pop(context); // Retour à l'écran précédent
+
+        // Récupérer les tokens de notification à partir de la liste des participants
+        List<String> notificationTokens = await NotificationService().getNotificationTokens(nouvelleReunion.participants);
+        // Envoyer les notifications aux participants
+        NotificationService().sendNotification(
+          'Nouvelle réunion',
+          'Une nouvelle réunion a été ajoutée !',
+          notificationTokens, // Utiliser la liste des tokens pour envoyer les notifications
+        );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -140,13 +165,18 @@ class BoutonService {
     }
   }
 
-  //Bouton pour uploader  les documents
-  Future<List<String>> selectionnerEtUploaderFichier(
-      BuildContext context, List<String> documents) async {
+  // Sélectionner un fichier et l'ajouter à la liste
+  Future<List<File>> selectionnerEtAfficherFichier(
+      BuildContext context,setState, List<File> documents) async {
 
-    String nomFichier = await fichiersService.selectionnerFichier();
+    File? fichier = await FichiersService().selectionnerFichier();
+    if (fichier != null) {
+      setState(() {
+        documents.add(fichier);
+      });
+    }
 
-    if (nomFichier.isNotEmpty && nomFichier != 'Aucun fichier selectionné') {
+    /*if (nomFichier.isNotEmpty && nomFichier != 'Aucun fichier selectionné') {
       // Si un fichier a bien été sélectionné et uploadé
       documents.add(nomFichier); // Ajouter le nom du fichier à la liste
 
@@ -174,10 +204,9 @@ class BoutonService {
           content: Text('Erreur: $nomFichier'),
           backgroundColor: Colors.red,
         ),
-      );
+      );*/
       return documents;
     }
-  }
 
   //Bouton pour la deconnexion
   void boutonDeconnexion(BuildContext context) {
@@ -197,7 +226,7 @@ class BoutonService {
             TextButton(
               child: const Icon(Icons.check, color: Colors.green),
               onPressed: () {
-                authService.deconnexion(context); // Déconnexion et retour à la page de connexion
+                AuthService().deconnexion(context); // Déconnexion et retour à la page de connexion
               },
             ),
           ],
@@ -291,7 +320,9 @@ class BoutonService {
       try {
         // Récupérer l'ID de l'utilisateur connecté
         String? adminId = FirebaseAuth.instance.currentUser?.uid;
+        String? tokenMessaging = await FirebaseMessaging.instance.getToken();
         manager.userMere = adminId.toString();
+        manager.notificationToken = tokenMessaging.toString();
 
 
         // Création de l'utilisateur apprenant dans Firebase Authentication avec un mot de passe par défaut
@@ -324,3 +355,4 @@ class BoutonService {
     }
   }
 }
+
