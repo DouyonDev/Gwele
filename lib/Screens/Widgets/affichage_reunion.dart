@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
 import 'package:gwele/Screens/Widgets/AfficherOrdresDuJourParReunionWidget.dart';
+import 'package:gwele/Screens/details_reunion.dart';
 
 class AffichageReunion extends StatelessWidget {
   final Reunion reunionData;
@@ -13,13 +14,13 @@ class AffichageReunion extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        /*
+
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TicketDetail(reunionData: reunionData),
+            builder: (context) => DetailReunionPage(reunionInfo: reunionData),
           ),
-        );*/
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
