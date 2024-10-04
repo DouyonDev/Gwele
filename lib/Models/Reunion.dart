@@ -12,7 +12,7 @@ class Reunion {
   String lieu;
   bool isCompleted;
   String lead;
-  List<String> decisions;
+  List<String> ordreDuJour;
   List<String> tachesAssignees;
   List<String> documents;
 
@@ -28,7 +28,7 @@ class Reunion {
     required this.lieu,
     required this.isCompleted,
     required this.lead,
-    required this.decisions,
+    required this.ordreDuJour,
     required this.tachesAssignees,
     required this.documents,
   });
@@ -53,7 +53,7 @@ class Reunion {
       lieu: doc['lieu'] ?? '',
       isCompleted: doc['isCompleted'] ?? false,
       lead: doc['lead'] ?? '',
-      decisions: List<String>.from(doc['decisions'] ?? []),
+      ordreDuJour: List<String>.from(doc['ordreDuJour'] ?? []),
       tachesAssignees: List<String>.from(doc['tachesAssignees'] ?? []),
       documents: List<String>.from(doc['documents'] ?? []),
     );
@@ -72,7 +72,7 @@ class Reunion {
       'lieu': lieu,
       'isCompleted': isCompleted,
       'lead': lead,
-      'decisions': decisions,
+      'ordreDuJour': ordreDuJour,
       'tachesAssignees': tachesAssignees,
       'documents': documents,
     };

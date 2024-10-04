@@ -26,7 +26,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
   TimeOfDay? _heureFin;
   String _lieu = '';
   List<String> _participants = [];
-  List<String> _decisions = [];
+  List<String> _ordreDuJour = [];
   List<String> _tachesAssignees = [];
   bool _isCompleted = false;
   String _lead = '';
@@ -407,7 +407,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
                           lieu: _lieu,
                           isCompleted: _isCompleted,
                           lead: _lead,
-                          decisions: _decisions,
+                          ordreDuJour: _ordreDuJour,
                           tachesAssignees: _tachesAssignees,
                           documents: documents, // Ajout des documents
                         );

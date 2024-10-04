@@ -84,14 +84,14 @@ class _MesReunionsState extends State<MesReunions> {
               stream: _getReunionsStream(user),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(color: Color(0xffF79621),));
+                  return const Center(child: CircularProgressIndicator(color: primaryColor,));
                 }
                 if (snapshot.hasError) {
                   return const Center(
                       child: Text(
                           'Erreur lors de la récupération des tickets.',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: secondaryColor,
                         ),
                       )
                   );
@@ -101,7 +101,7 @@ class _MesReunionsState extends State<MesReunions> {
                       child: Text(
                           'Aucun ticket trouvé.',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: secondaryColor,
                           ),
                       )
                   );
@@ -109,7 +109,7 @@ class _MesReunionsState extends State<MesReunions> {
                 return ListView(
                   children: snapshot.data!.docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
-                    data['id_ticket'] = doc.id;
+                    //data['id_reunion'] = doc.id;
                     return AffichageReunion(reunionData: data);
                   }).toList(),
                 );

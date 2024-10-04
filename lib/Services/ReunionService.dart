@@ -70,8 +70,8 @@ class ReunionService {
                 'Lieu non défini', // Valeur par défaut si manquant
             isCompleted: data['isCompleted'] ?? false, // Faux par défaut
             lead: data['lead'] ?? 'Non défini', // Valeur par défaut si manquant
-            decisions: data['decisions'] != null
-                ? List<String>.from(data['decisions'])
+            ordreDuJour: data['ordreDuJour'] != null
+                ? List<String>.from(data['ordreDuJour'])
                 : [], // Liste vide si manquant
             tachesAssignees: [], // Gérer séparément si nécessaire
             documents: [],
@@ -104,7 +104,7 @@ class ReunionService {
         'lieu': reunion.lieu,
         'isCompleted': reunion.isCompleted,
         'lead': reunion.lead,
-        'decisions': reunion.decisions,
+        'ordreDuJour': reunion.ordreDuJour,
         'tachesAssignees': reunion.tachesAssignees,
       });
     } catch (e) {

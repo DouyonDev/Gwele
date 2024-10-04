@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
 
 class AffichageReunion extends StatelessWidget {
   final Map<String, dynamic> reunionData;
@@ -23,15 +24,6 @@ class AffichageReunion extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: AlignmentDirectional.bottomStart,
-              end: AlignmentDirectional.topEnd,
-              colors: [
-                Color(0xFF1C1939),
-                Color(0xFF005261),
-              ],
-              stops: [0.0035, 0.9973],
-            ),
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),
             boxShadow: [
@@ -47,16 +39,16 @@ class AffichageReunion extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                reunionData['categorie'] ?? 'Sans catégorie',
+                reunionData['titre'] ?? 'Sans titre',
                 style: const TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: secondaryColor,
                 ),
               ),
               const SizedBox(height: 8.0),
               Text(
-                reunionData['titre'] ?? 'Sans titre',
+                reunionData['dateReunion'] ?? 'date non renseignée',
                 style: const TextStyle(
                   fontSize: 16.0,
                   color: Colors.grey,
@@ -66,7 +58,7 @@ class AffichageReunion extends StatelessWidget {
               ),
               const Divider(),
               Text(
-                reunionData['description'] ?? 'Pas de description disponible',
+                reunionData['ordreDujour'] ?? 'Pas d\'ordre du jour !!!',
                 style: TextStyle(
                   fontSize: 14.0,
                   color: Colors.grey[700],
