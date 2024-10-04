@@ -3,6 +3,7 @@ import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
 import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
+import 'package:gwele/Services/UtilsService.dart';
 
 class DetailReunionPage extends StatelessWidget {
   final Reunion reunionInfo;
@@ -26,45 +27,46 @@ class DetailReunionPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Utiliser SingleChildScrollView pour éviter les erreurs de layout
-          child: Column(
-            children: [
-              // Premier Bloc: Titre, Date, Statut, Heure, Salle
-              _buildFirstBlock(),
-
-              const SizedBox(height: 20),
-
-              // Deuxième Bloc: Liste des ordres du jour
-              _buildOrdreDuJourBlock(),
-
-              const SizedBox(height: 20),
-
-              // Troisième Bloc: Liste des participants
-              _buildParticipantsBlock(),
-
-              const SizedBox(height: 20),
-
-              // Quatrième Bloc: Liste des documents
-              _buildDocumentsBlock(),
-
-              const SizedBox(height: 20),
-
-              // IconButton pour uploader des documents
-              if (reunionInfo.statut == "En attente")
-                Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.upload_file, color: primaryColor),
-                    onPressed: () {
-                      // Logique pour uploader les documents
-                    },
-                  ),
+        child: Column(
+          children: [
+            Expanded( // Utiliser Expanded pour faire occuper l'espace restant
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Premier Bloc: Titre, Date, Statut, Heure, Salle
+                    blocStyle(_buildFirstBlock()),
+                    const SizedBox(height: 20),
+                    // Deuxième Bloc: Liste des ordres du jour
+                    blocStyle(_buildOrdreDuJourBlock()),
+                    const SizedBox(height: 20),
+                    // Troisième Bloc: Liste des participants
+                    blocStyle(_buildParticipantsBlock()),
+                    const SizedBox(height: 20),
+                    // Quatrième Bloc: Liste des documents
+                    blocStyle(_buildDocumentsBlock()),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-            ],
-          ),
+              ),
+            ),
+            // IconButton pour uploader des documents, en dehors du SingleChildScrollView
+            if (reunionInfo.statut != "Archivee")
+              Row(
+                children: [
+                  IconButton(
+                  icon: const Icon(Icons.upload_file, color: primaryColor),
+                  onPressed: () {
+                    // Logique pour uploader les documents
+                  },
+                ),
+                ]
+              ),
+          ],
         ),
       ),
     );
   }
+
 
   // Premier Bloc: Titre, Date, Statut, Heure, Salle
   Widget _buildFirstBlock() {
@@ -80,14 +82,27 @@ class DetailReunionPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8.0),
-        Text(
-          'Date : ${reunionInfo.dateReunion ?? 'Date non disponible'}',
-          style: const TextStyle(
-            fontSize: 16.0,
-            color: Colors.grey,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Date : ${reunionInfo.dateReunion != null ? UtilsService().formatDate(DateTime.parse(reunionInfo.dateReunion.toString())) : 'Date non disponible'}',
+              style: const TextStyle(
+                fontSize: 16.0,
+                color: Colors.grey,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              'Statut : ${reunionInfo.statut ?? 'Statut inconnu'}',
+              style: TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.bold,
+                color: reunionInfo.statut == 'resolu' ? Colors.green : Colors.red,
+              ),
+            ),
+          ],
         ),
         const Divider(),
         const SizedBox(height: 16.0),
@@ -95,7 +110,8 @@ class DetailReunionPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Heure : ${reunionInfo.heureDebut ?? 'Non spécifiée'} - ${reunionInfo.heureFin ?? 'Non spécifiée'}',
+              'Debut : ${reunionInfo.heureDebut.hour ?? 'Non spécifiée'}:${reunionInfo.heureDebut.minute ?? 'Non spécifiée'} -'
+                  ' Fin : ${reunionInfo.heureFin.hour ?? 'Non spécifiée'}:${reunionInfo.heureFin.minute ?? 'Non spécifiée'}',
               style: const TextStyle(
                 fontSize: 16.0,
                 color: Colors.grey,
@@ -111,14 +127,6 @@ class DetailReunionPage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8.0),
-        Text(
-          'Statut : ${reunionInfo.statut ?? 'Statut inconnu'}',
-          style: TextStyle(
-            fontSize: 12.0,
-            fontWeight: FontWeight.bold,
-            color: reunionInfo.statut == 'resolu' ? Colors.green : Colors.red,
-          ),
-        ),
       ],
     );
   }
@@ -245,6 +253,28 @@ class DetailReunionPage extends StatelessWidget {
     String path = uri.path; // Obtient le chemin de l'URL
     String fileName = path.substring(path.lastIndexOf('/') + 1); // Extrait le nom du fichier
     return fileName; // Retourne le nom du fichier
+  }
+
+  // Bloc Style
+  Widget blocStyle(Widget bloc) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: bloc,
+      ),
+    );
   }
 
 
