@@ -473,7 +473,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
                             context,
                             nouvelleReunion
                         );
-                        _formKey.currentState!.reset();
+                        //_formKey.currentState!.reset();
                       },
                       child: const Text('Ajouter la réunion'),
                     ),

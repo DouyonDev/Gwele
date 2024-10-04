@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gwele/Services/UtilsService.dart';
 
 class Reunion {
   String id;
@@ -65,7 +66,7 @@ class Reunion {
       'titre': titre,
       'description': description,
       'statut': statut,
-      'dateReunion': dateReunion.toIso8601String(),
+      'dateReunion': UtilsService().formatDate(dateReunion),
       'heureDebut': {'hour': heureDebut.hour, 'minute': heureDebut.minute},
       'heureFin': {'hour': heureFin.hour, 'minute': heureFin.minute},
       'participants': participants,

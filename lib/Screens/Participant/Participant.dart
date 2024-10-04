@@ -8,6 +8,7 @@ import 'package:gwele/Screens/Participant/mes_reunions.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
 
 import '../profil.dart';
+import 'mes_reunions_calendar.dart';
 
 class Participant extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class ParticipantState extends State<Participant> {
   static final List<Widget> _pages = <Widget>[
     MesReunions() ,
     AjoutEquipe(),
-    AjoutMembre(),
+    ReunionCalendarPage(),
     Profil(),
   ];
 
