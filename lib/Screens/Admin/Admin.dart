@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:gwele/Screens/Admin/ajout_Manager.dart';
 import 'package:gwele/Screens/Lead/ajout_reunion.dart';
-import 'package:gwele/Screens/Participant/ajout_offre.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
 
-import '../Participant/mes_reunions.dart';
 import '../profil.dart';
 import '../Manager/ajout_equipe.dart';
 
@@ -22,7 +20,7 @@ class AdminState extends State<Admin> {
   static final List<Widget> _pages = <Widget>[
     AjoutReunion(),
     AjoutEquipe(),
-    AjoutOffre(),
+    AjoutManager(),
     Profil(),
   ];
 

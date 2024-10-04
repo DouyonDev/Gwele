@@ -53,6 +53,7 @@ class ReunionService {
                 data['titre'] ?? 'Sans titre', // Valeur par défaut si manquant
             description: data['description'] ??
                 'Pas de description', // Valeur par défaut
+            statut: data['statut'] ?? 'En attente', // Valeur par défaut si statut
             dateReunion: data['dateReunion'] != null
                 ? DateTime.parse(data['dateReunion'])
                 : DateTime.now(), // Fallback sur la date actuelle si manquant
@@ -97,6 +98,7 @@ class ReunionService {
       await reunionCollection.doc(reunion.id).update({
         'titre': reunion.titre,
         'description': reunion.description,
+        'statut': reunion.statut,
         'dateReunion': reunion.dateReunion.toIso8601String(),
         'participants': reunion.participants,
         'lieu': reunion.lieu,

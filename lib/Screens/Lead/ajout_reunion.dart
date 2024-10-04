@@ -399,6 +399,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
                           id: '', // L'ID sera généré automatiquement par Firestore
                           titre: _titre,
                           description: _description,
+                          statut: "En attente",
                           dateReunion: _dateReunion,
                           heureDebut: _heureDebut!,
                           heureFin: _heureFin!,

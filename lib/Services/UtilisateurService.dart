@@ -9,11 +9,8 @@ class UtilisateurService {
   // Ajouter un utilisateur avec un ID généré automatiquement par Firestore
   Future<void> ajouterUtilisateur(Utilisateur utilisateur) async {
     try {
-      // Utilisation de la méthode `add()` pour générer automatiquement l'ID
-      DocumentReference docRef = await utilisateurCollection.add(utilisateur.toMap());
-
-      // Récupérer l'ID généré automatiquement et mettre à jour l'objet utilisateur
-      utilisateur.id = docRef.id;
+      // Utilise `doc()` avec l'ID fourni par `utilisateur.id` et la méthode `set()` pour enregistrer les données
+      await utilisateurCollection.doc(utilisateur.id).set(utilisateur.toMap());
 
       print('Utilisateur ajouté avec l\'ID: ${utilisateur.id}');
     } catch (e) {
@@ -21,6 +18,7 @@ class UtilisateurService {
       throw e; // Propager l'erreur pour la gestion à un niveau supérieur
     }
   }
+
 
 
   // Récupérer une liste d'utilisateurs

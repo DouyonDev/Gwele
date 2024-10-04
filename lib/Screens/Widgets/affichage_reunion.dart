@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class AffichageTicket extends StatelessWidget {
+class AffichageReunion extends StatelessWidget {
   final Map<String, dynamic> reunionData;
 
-  AffichageTicket({required this.reunionData});
+  AffichageReunion({required this.reunionData});
 
   @override
   Widget build(BuildContext context) {

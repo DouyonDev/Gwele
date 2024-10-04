@@ -95,7 +95,7 @@ class BoutonService {
 
         // Afficher un message de succès
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Formateur ajouté avec succès')),
+          const SnackBar(content: Text('Manager ajouté avec succès')),
         );
 
         // Réinitialiser le formulaire après l'enregistrement
@@ -301,7 +301,7 @@ class BoutonService {
       await EquipeService().ajouterEquipe(nouvelleEquipe);
       // Afficher un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Équipe ajoutée avec succès !'))
+          const SnackBar(content: Text('Équipe ajoutée avec succès !'))
       );
     } catch (e) {
       // Afficher un message d'erreur si l'ajout échoue
@@ -325,19 +325,20 @@ class BoutonService {
         manager.notificationToken = tokenMessaging.toString();
 
 
-        // Création de l'utilisateur apprenant dans Firebase Authentication avec un mot de passe par défaut
+        // Création de l'utilisateur manager dans Firebase Authentication avec un mot de passe par défaut
         UserCredential userCredential =
         await auth.createUserWithEmailAndPassword(
           email: manager.email,
           password: '12345678', // Mot de passe par défaut
         );
 
+        manager.id = userCredential.user!.uid;
         // Enregistrement des informations du manager dans Firestore
         UtilisateurService().ajouterUtilisateur(manager);
 
         // Afficher un message de succès
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Manager ajouté avec succès')),
+          const SnackBar(content: Text('Utilisateur ajouté avec succès')),
         );
 
         // Réinitialiser le formulaire après l'enregistrement

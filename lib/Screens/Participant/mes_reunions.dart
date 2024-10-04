@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../Colors.dart';
-import '../widgets/affichage_ticket.dart';
+import '../widgets/affichage_reunion.dart';
 import '../widgets/boutons_filtre.dart';
 
 class MesReunions extends StatefulWidget {
@@ -12,7 +12,7 @@ class MesReunions extends StatefulWidget {
 }
 
 class _MesReunionsState extends State<MesReunions> {
-  String selectedStatus = 'tout'; // Par défaut, on affiche tous les tickets
+  String selectedStatus = 'En attente'; // Par défaut, on affiche tous les tickets
 
   void _updateStatus(String status) {
     setState(() {
@@ -31,7 +31,7 @@ class _MesReunionsState extends State<MesReunions> {
             child: Text(
                 'Vous devez être connecté pour voir les réunions auxquelles vous avez participez.',
                 style: TextStyle(
-                  color: secondaryColor,
+                  color: thirdColor,
                 ),
             )
         ),
@@ -44,7 +44,7 @@ class _MesReunionsState extends State<MesReunions> {
         backgroundColor: backgroundColor,
         automaticallyImplyLeading: false,
         //toolbarHeight: 70,
-        title: Text(
+        title: const Text(
             'Liste des réunions',
         style: TextStyle(
             fontSize: 30,
@@ -60,26 +60,20 @@ class _MesReunionsState extends State<MesReunions> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               FilterButton(
-                label: 'Tout',
-                status: 'tout',
-                selectedStatus: selectedStatus,
-                onStatusSelected: _updateStatus,
-              ),
-              FilterButton(
-                label: 'En attente',
-                status: 'en_attente',
+                label: 'Programmer',
+                status: 'En attente',
                 selectedStatus: selectedStatus,
                 onStatusSelected: _updateStatus,
               ),
               FilterButton(
                 label: 'En cours',
-                status: 'en_cours',
+                status: 'En cours',
                 selectedStatus: selectedStatus,
                 onStatusSelected: _updateStatus,
               ),
               FilterButton(
-                label: 'Résolu',
-                status: 'resolu',
+                label: 'Terminer',
+                status: 'Termine',
                 selectedStatus: selectedStatus,
                 onStatusSelected: _updateStatus,
               ),
@@ -87,7 +81,7 @@ class _MesReunionsState extends State<MesReunions> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _getTicketsStream(user),
+              stream: _getReunionsStream(user),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator(color: Color(0xffF79621),));
@@ -116,7 +110,7 @@ class _MesReunionsState extends State<MesReunions> {
                   children: snapshot.data!.docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
                     data['id_ticket'] = doc.id;
-                    return AffichageTicket(reunionData: data);
+                    return AffichageReunion(reunionData: data);
                   }).toList(),
                 );
               },
@@ -128,18 +122,22 @@ class _MesReunionsState extends State<MesReunions> {
   }
 
   // 4. Fonction pour obtenir les tickets en fonction du statut sélectionné
-  Stream<QuerySnapshot> _getTicketsStream(User user) {
-    if (selectedStatus == 'tout') {
+  Stream<QuerySnapshot> _getReunionsStream(User user) {
+    if (selectedStatus == 'En attente') {
+      // Filtrer toutes les réunions où l'utilisateur est un participant
       return FirebaseFirestore.instance
-          .collection('tickets')
-          .where('id_apprenant', isEqualTo: user.uid)
+          .collection('reunions')
+          .where('participants', arrayContains: user.uid) // Vérifier si l'utilisateur est dans les participants
           .snapshots();
     } else {
+      // Filtrer par statut et vérifier si l'utilisateur est un participant
       return FirebaseFirestore.instance
-          .collection('tickets')
-          .where('id_apprenant', isEqualTo: user.uid)
-          .where('statut', isEqualTo: selectedStatus)
+          .collection('reunions')
+          .where('participants', arrayContains: user.uid) // Vérifier si l'utilisateur est dans les participants
+          .where('statut', isEqualTo: selectedStatus) // Filtrer par statut
           .snapshots();
     }
   }
+
+
 }

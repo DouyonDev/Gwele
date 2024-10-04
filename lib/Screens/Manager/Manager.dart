@@ -1,9 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:gwele/Screens/Admin/ajout_Manager.dart';
+import 'package:gwele/Screens/Lead/ajout_reunion.dart';
+import 'package:gwele/Screens/Manager/ajout_Membre.dart';
+import 'package:gwele/Screens/dashbord/const/constant.dart';
+
+import '../profil.dart';
+import '../Manager/ajout_equipe.dart';
 
 class Manager extends StatefulWidget {
-  //Apprenant({required Key key}) : super(key: key);
-
   @override
   ManagerState createState() => ManagerState();
 }
@@ -13,72 +19,46 @@ class ManagerState extends State<Manager> {
 
   // Liste des widgets pour chaque page
   static final List<Widget> _pages = <Widget>[
-    //TicketsResoluTout(),
-    //MesTickets(),
-    //DiscussionsPage(userId: FirebaseAuth.instance.currentUser!.uid),
-    //Profil(),
+    AjoutReunion(),
+    AjoutEquipe(),
+    AjoutMembre(),
+    Profil(),
   ];
 
-  // Méthode pour changer de page
+  // Méthode pour changer de page à partir de la barre de navigation
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (index >= 0 && index < _pages.length) {
+        _selectedIndex = index; // Met à jour l'index lorsqu'une icône est cliquée
+      } else {
+        print('Index hors limite : $index');
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: const Color(0xff1E1C40),
-        child: _pages[_selectedIndex], // Affichage de la page sélectionnée
+      extendBody: true,
+      body: _pages[_selectedIndex], // Affiche la page correspondant à l'index sélectionné
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _selectedIndex,
+        height: 60.0,
+        items: const <Widget>[
+          Icon(Icons.home, size: 30, color: Colors.white),
+          Icon(Icons.task_alt_outlined, size: 30, color: Colors.white),
+          Icon(Icons.school, size: 30, color: Colors.white),
+          Icon(Icons.person, size: 30, color: Colors.white),
+        ],
+        color: primaryColor,
+        buttonBackgroundColor: Colors.amber[800]!,
+        backgroundColor: Colors.transparent,
+        animationCurve: Curves.easeInOut,
+        animationDuration: const Duration(milliseconds: 600),
+        onTap: (index) {
+          _onItemTapped(index); // Appelle la méthode pour changer de page
+        },
       ),
-      bottomNavigationBar: BottomAppBar(
-        shadowColor: Colors.amber,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            _buildIconButton(Icons.home, 0, 'Home'),
-            _buildIconButton(Icons.business, 1, 'Tickets'),
-            _buildIconButton(Icons.school, 2, 'Discussions'),
-            _buildIconButton(Icons.person, 3, 'Profile'),
-          ],
-        ),
-        color: const Color(0xff16142e), // Arrière-plan du BottomAppBar
-      ),
-    );
-  }
-
-  Widget _buildIconButton(IconData icon, int index, String label) {
-    bool isSelected = _selectedIndex == index;
-
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        IconButton(
-          icon: Icon(icon),
-          color: isSelected ? Colors.amber[800] : Colors.grey[400],
-          onPressed: () {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
-        if (isSelected)
-          Positioned(
-            bottom: 0,
-            child: Opacity(
-              opacity: isSelected ? 1.0 : 0.0,
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: Colors.amber[800],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-      ],
     );
   }
 }

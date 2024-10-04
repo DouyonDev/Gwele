@@ -15,7 +15,7 @@ class BienvenueState extends State<Bienvenue> {
     super.initState();
 
     // Naviguer vers la page de connexion après 5 secondes
-    Timer(const Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 0), () {
       // Vérifier si le widget est encore monté avant de naviguer
       if (mounted) {
         Navigator.of(context).pushReplacement(

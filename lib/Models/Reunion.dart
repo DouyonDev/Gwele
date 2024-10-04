@@ -4,6 +4,7 @@ class Reunion {
   String id;
   String titre;
   String description;
+  String statut;
   DateTime dateReunion;
   TimeOfDay heureDebut;
   TimeOfDay heureFin;
@@ -19,6 +20,7 @@ class Reunion {
     required this.id,
     required this.titre,
     required this.description,
+    required this.statut,
     required this.dateReunion,
     required this.heureDebut,
     required this.heureFin,
@@ -37,6 +39,7 @@ class Reunion {
       id: docId,
       titre: doc['titre'] ?? '',
       description: doc['description'] ?? '',
+      statut: doc['statut'] ?? '',
       dateReunion: DateTime.parse(doc['dateReunion'] ?? DateTime.now().toIso8601String()),
       heureDebut: TimeOfDay(
         hour: (doc['heureDebut'] as Map<String, dynamic>?)?['hour'] ?? 0,
@@ -61,6 +64,7 @@ class Reunion {
     return {
       'titre': titre,
       'description': description,
+      'statut': statut,
       'dateReunion': dateReunion.toIso8601String(),
       'heureDebut': {'hour': heureDebut.hour, 'minute': heureDebut.minute},
       'heureFin': {'hour': heureFin.hour, 'minute': heureFin.minute},
