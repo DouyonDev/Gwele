@@ -32,6 +32,8 @@ class _AjoutReunionState extends State<AjoutReunion> {
   String _lead = '';
   List<String> documents = []; // Liste des documents
   List<File> fichiersSelectionnes = []; // Liste des fichiers selectionnes
+  List<File> ordreDuJourAjoute = []; // Liste des fichiers selectionnes
+  List<File> ordreDuJour = []; // Liste des fichiers selectionnes
 
   // Fonction pour récupérer la liste des participants depuis Firestore
   Future<QuerySnapshot> fetchParticipants() async {
@@ -355,6 +357,60 @@ class _AjoutReunionState extends State<AjoutReunion> {
                                 ),
                                 color:
                                     primaryColor, // Couleur de l'icône personnalisée (optionnel)
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 10),
+                        Column(
+                          children: fichiersSelectionnes.map((file) {
+                            // Obtenir le nom du fichier à partir du chemin
+                            String fileName = path.basename(file.path); // Extraire le nom du fichier
+                            return ListTile(
+                              leading: const Icon(Icons.insert_drive_file), // Icône pour le fichier
+                              title: Text(fileName), // Affiche uniquement le nom du fichier
+                              trailing: IconButton(
+                                icon: const Icon(Icons.remove_circle_outline), // Bouton pour supprimer
+                                onPressed: () {
+                                  // Action pour supprimer un document de la liste
+                                  setState(() {
+                                    fichiersSelectionnes.remove(file);
+                                  });
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                      ],
+                    ),
+
+                    //Zone pour les ordres du jour
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .spaceBetween, // Espace entre le texte et l'icône
+                          children: [
+                            const Expanded(
+                              // Assure que le texte prend tout l'espace disponible à gauche
+                              child: Text(
+                                "Les ordres du jour",
+                                style: TextStyle(
+                                  color: primaryColor, // Couleur personnalisée
+                                  fontSize:
+                                  16.0, // Taille de la police personnalisée
+                                ),
+                              ),
+                            ),
+                            Align(
+                              // Aligner l'icône à droite
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton(
+                                onPressed: () => BoutonService().boutonAjouterOrdreDuJour(context),
+                                child: const Text('Ajouter Ordre du Jour'),
                               ),
                             ),
                           ],

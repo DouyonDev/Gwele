@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
+import 'package:gwele/Models/Reunion.dart';
+import 'package:gwele/Screens/Widgets/AfficherOrdresDuJourParReunionWidget.dart';
 
 class AffichageReunion extends StatelessWidget {
-  final Map<String, dynamic> reunionData;
+  final Reunion reunionData;
 
   AffichageReunion({required this.reunionData});
 
@@ -39,7 +41,7 @@ class AffichageReunion extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                reunionData['titre'] ?? 'Sans titre',
+                reunionData.titre ?? 'Sans titre',
                 style: const TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
@@ -48,7 +50,7 @@ class AffichageReunion extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                reunionData['dateReunion'] ?? 'date non renseignée',
+                'Date : ${reunionData.dateReunion.hour != null ? (reunionData.dateReunion) : 'Date non disponible'}',
                 style: const TextStyle(
                   fontSize: 16.0,
                   color: Colors.grey,
@@ -57,32 +59,20 @@ class AffichageReunion extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const Divider(),
-              Text(
-                reunionData['ordreDujour'] ?? 'Pas d\'ordre du jour !!!',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.grey[700],
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+              AfficherOrdresDuJourParReunionWidget(reunionId: reunionData.id.toString()),
               const SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Date Ajout: ${reunionData['created_at'] != null ? (reunionData['created_at'] as Timestamp).toDate().toLocal().toString().split(' ')[0] : 'Date non disponible'}',
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.grey[600],
-                    ),
+                  const Text(
+                    "",//Pour les icones des participants
                   ),
                   Text(
-                    'Statut : ${reunionData['statut'] ?? 'Statut inconnu'}',
+                    'Statut : ${reunionData.statut ?? 'Statut inconnu'}',
                     style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.bold,
-                      color: reunionData['statut'] == 'resolu'
+                      color: reunionData.statut == 'resolu'
                           ? Colors.green
                           : Colors.red,
                     ),

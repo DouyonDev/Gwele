@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Models/Reunion.dart';
 
 import '../../Colors.dart';
 import '../widgets/affichage_reunion.dart';
@@ -73,7 +74,7 @@ class _MesReunionsState extends State<MesReunions> {
               ),
               FilterButton(
                 label: 'Terminer',
-                status: 'Termine',
+                status: 'Terminer',
                 selectedStatus: selectedStatus,
                 onStatusSelected: _updateStatus,
               ),
@@ -89,7 +90,7 @@ class _MesReunionsState extends State<MesReunions> {
                 if (snapshot.hasError) {
                   return const Center(
                       child: Text(
-                          'Erreur lors de la récupération des tickets.',
+                          'Erreur lors de la récupération des réunions.',
                         style: TextStyle(
                           color: secondaryColor,
                         ),
@@ -99,20 +100,23 @@ class _MesReunionsState extends State<MesReunions> {
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(
                       child: Text(
-                          'Aucun ticket trouvé.',
+                          'Aucune réunion trouvée.',
                           style: TextStyle(
                             color: secondaryColor,
                           ),
                       )
                   );
                 }
+
                 return ListView(
                   children: snapshot.data!.docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
-                    //data['id_reunion'] = doc.id;
-                    return AffichageReunion(reunionData: data);
+                    // Créez un objet Reunion à partir des données
+                    final reunion = Reunion.fromDocument(data, doc.id);
+                    return AffichageReunion(reunionData: reunion); // Passez l'objet Reunion ici
                   }).toList(),
                 );
+
               },
             ),
           ),
@@ -128,6 +132,7 @@ class _MesReunionsState extends State<MesReunions> {
       return FirebaseFirestore.instance
           .collection('reunions')
           .where('participants', arrayContains: user.uid) // Vérifier si l'utilisateur est dans les participants
+          .where('statut', isEqualTo: 'En attente')
           .snapshots();
     } else {
       // Filtrer par statut et vérifier si l'utilisateur est un participant

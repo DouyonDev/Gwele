@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:gwele/Screens/Widgets/ajout_ordre_du_jour.dart';
 import 'package:gwele/Services/NotificationService.dart';
 
 import '../Models/Equipe.dart';
@@ -354,6 +355,23 @@ class BoutonService {
         );
       }
     }
+  }
+
+  // Bouton pour ajouter un ordre du jour
+  void boutonAjouterOrdreDuJour(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AjouterOrdreDuJour(
+          onOrdreDuJourAjoute: (String id) {
+            // Gérer l'ID retourné ici
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Ordre du jour ajouté avec l\'ID : $id')),
+            );
+          },
+        );
+      },
+    );
   }
 }
 
