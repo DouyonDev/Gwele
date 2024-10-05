@@ -6,6 +6,7 @@ import 'package:gwele/Models/Reunion.dart';
 import '../../Colors.dart';
 import '../widgets/affichage_reunion.dart';
 import '../widgets/boutons_filtre.dart';
+import 'mes_reunions_calendar.dart';
 
 class MesReunions extends StatefulWidget {
   @override
@@ -78,6 +79,14 @@ class _MesReunionsState extends State<MesReunions> {
                 selectedStatus: selectedStatus,
                 onStatusSelected: _updateStatus,
               ),
+              IconButton(onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ReunionCalendarPage(),
+                  ),
+                );
+              }, icon:  const Icon(Icons.calendar_month), )
             ],
           ),
           Expanded(

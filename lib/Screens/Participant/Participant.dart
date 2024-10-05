@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:gwele/Screens/Lead/ajout_reunion.dart';
-import 'package:gwele/Screens/Manager/ajout_Membre.dart';
-import 'package:gwele/Screens/Manager/ajout_equipe.dart';
+import 'package:gwele/Screens/Participant/mes_Offres.dart';
 import 'package:gwele/Screens/Participant/mes_reunions.dart';
+import 'package:gwele/Screens/Participant/mes_taches.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
 
 import '../profil.dart';
-import 'mes_reunions_calendar.dart';
 
 class Participant extends StatefulWidget {
   @override
@@ -21,8 +19,8 @@ class ParticipantState extends State<Participant> {
   // Liste des widgets pour chaque page
   static final List<Widget> _pages = <Widget>[
     MesReunions() ,
-    AjoutEquipe(),
-    ReunionCalendarPage(),
+    MesTaches(),
+    MesOffres(),
     Profil(),
   ];
 
@@ -48,7 +46,7 @@ class ParticipantState extends State<Participant> {
         items: const <Widget>[
           Icon(Icons.home, size: 30, color: Colors.white),
           Icon(Icons.task_alt_outlined, size: 30, color: Colors.white),
-          Icon(Icons.school, size: 30, color: Colors.white),
+          Icon(Icons.surround_sound, size: 30, color: Colors.white),
           Icon(Icons.person, size: 30, color: Colors.white),
         ],
         color: primaryColor,

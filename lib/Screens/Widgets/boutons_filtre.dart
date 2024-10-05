@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
 
 class FilterButton extends StatelessWidget {
   final String label;
@@ -20,7 +21,7 @@ class FilterButton extends StatelessWidget {
         onStatusSelected(status);
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: selectedStatus == status ? const Color(0xff0E39C6) : Colors.white,
+        backgroundColor: selectedStatus == status ? primaryColor : Colors.white,
         minimumSize: const Size(10, 20), // Ajustez ici la longueur et la largeur du bouton
         textStyle: const TextStyle(
           fontSize: 10, // Ajustez ici la taille de la police

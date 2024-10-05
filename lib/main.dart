@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Services/AdminService.dart';
+import 'Screens/dashbord/admin/dashbord.dart';
 import 'firebase_options.dart';
 
 import 'Colors.dart';

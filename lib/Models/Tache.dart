@@ -1,24 +1,26 @@
+import '../Services/UtilsService.dart';
+
 class Tache {
-   String id;
-   String titre;
-   String description;
-   String assigneA;
-   DateTime dateLimite;
-   String statut;
-   String priorite;
-   List<String> commentaires;
-   List<String> documents;
+  String id;
+  String titre;
+  String description;
+  String assigneA;
+  String assignePar;
+  DateTime dateLimite;
+  String statut;
+  String priorite;
+  List<String> commentaires;
 
   Tache({
     required this.id,
     required this.titre,
     required this.description,
     required this.assigneA,
+    required this.assignePar,
     required this.dateLimite,
     required this.statut,
     required this.priorite,
     required this.commentaires,
-    required this.documents,
   });
 
   // Méthode pour convertir un document Firestore en instance de Tache
@@ -28,11 +30,11 @@ class Tache {
       titre: doc['titre'] ?? '',
       description: doc['description'] ?? '',
       assigneA: doc['assigneA'] ?? '',
+      assignePar: doc['assignePar'] ?? '',
       dateLimite: DateTime.parse(doc['dateLimite'] ?? DateTime.now().toIso8601String()),
       statut: doc['statut'] ?? '',
       priorite: doc['priorite'] ?? '',
       commentaires: List<String>.from(doc['commentaires'] ?? []),
-      documents: List<String>.from(doc['documents'] ?? []),
     );
   }
 
@@ -42,11 +44,11 @@ class Tache {
       'titre': titre,
       'description': description,
       'assigneA': assigneA,
-      'dateLimite': dateLimite.toIso8601String(),
+      'assignePar': assignePar,
+      'dateLimite': UtilsService().formatDate(dateLimite),
       'statut': statut,
       'priorite': priorite,
       'commentaires': commentaires,
-      'documents': documents,
     };
   }
 }

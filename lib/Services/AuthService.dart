@@ -105,4 +105,5 @@ class AuthService {
     }
     return null; // Si l'utilisateur n'est pas connecté
   }
+
 }

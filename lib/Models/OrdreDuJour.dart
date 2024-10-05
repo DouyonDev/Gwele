@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class OrdreDuJour {
   String id; // UUID
   String titre;

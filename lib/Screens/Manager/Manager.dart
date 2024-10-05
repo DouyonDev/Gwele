@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:gwele/Screens/Admin/ajout_Manager.dart';
 import 'package:gwele/Screens/Lead/ajout_reunion.dart';
 import 'package:gwele/Screens/Manager/ajout_Membre.dart';
+import 'package:gwele/Screens/Participant/ajout_tache.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
-
 import '../profil.dart';
-import '../Manager/ajout_equipe.dart';
 
 class Manager extends StatefulWidget {
   @override
@@ -20,7 +18,7 @@ class ManagerState extends State<Manager> {
   // Liste des widgets pour chaque page
   static final List<Widget> _pages = <Widget>[
     AjoutReunion(),
-    AjoutEquipe(),
+    AjoutTache(),
     AjoutMembre(),
     Profil(),
   ];

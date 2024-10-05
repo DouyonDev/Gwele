@@ -6,8 +6,8 @@ import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../Colors.dart';
-import '../../Models/Reunion.dart';
 import '../../Services/BoutonService.dart';
+import '../../Services/OffreService.dart';
 
 class AjoutOffre extends StatefulWidget {
   @override
@@ -217,7 +217,7 @@ class _AjoutOffreState extends State<AjoutOffre> {
                         );
                         print("les documents");
                         print(nouvelleOffre.documents);
-                        //OffreService().ajouterOffre(nouvelleOffre);
+                        OffreService().ajouterOffre(nouvelleOffre);
 
                         //_formKey.currentState!.reset();
                       },

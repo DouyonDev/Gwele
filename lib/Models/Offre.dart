@@ -1,3 +1,5 @@
+import '../Services/UtilsService.dart';
+
 class Offre {
   String id; // Identifiant unique de l'offre
   String titre; // Titre de l'offre
@@ -24,7 +26,7 @@ class Offre {
     return {
       'titre': titre,
       'description': description,
-      'dateLimite': dateLimite.toIso8601String(), // Convertir DateTime en String pour Firestore
+      'dateLimite': UtilsService().formatDate(dateLimite), // Convertir DateTime en String pour Firestore
       'statut': statut,
       'documents': documents,
       'soumisPar': soumisPar,

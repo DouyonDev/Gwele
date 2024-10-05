@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
@@ -17,18 +18,19 @@ class _ReunionCalendarPageState extends State<ReunionCalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: backgroundColor,
-        foregroundColor: secondaryColor,
-        title: const Text("Liste de vos réunions"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: secondaryColor), // Icône retour
-          onPressed: () {
-            Navigator.pop(context); // Retourner à l'écran précédent
-          },
-        ),
+        //toolbarHeight: 70,
+        title: const Text(
+          'Liste de vos réunions',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -58,6 +60,7 @@ class _ReunionCalendarPageState extends State<ReunionCalendarPage> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('reunions')
+                  .where('participants', arrayContains: user?.uid) // Vérifier si l'utilisateur est dans les participants
                   .where('dateReunion', isEqualTo: UtilsService().formatDate(_selectedDate))
                   .snapshots(),
               builder: (context, snapshot) {
