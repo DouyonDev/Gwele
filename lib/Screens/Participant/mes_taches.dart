@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gwele/Models/Reunion.dart';
 import 'package:gwele/Screens/Participant/ajout_tache.dart';
 import 'package:gwele/Screens/Widgets/affichage_tache.dart';
 
 import '../../Colors.dart';
 import '../../Models/Tache.dart';
 import '../Widgets/AppBarListPage.dart';
-import '../widgets/affichage_reunion.dart';
 import '../widgets/boutons_filtre.dart';
-import 'mes_reunions_calendar.dart';
 
 class MesTaches extends StatefulWidget {
   @override
