@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:gwele/Screens/Widgets/ajout_ordre_du_jour.dart';
+import 'package:gwele/Screens/Widgets/message_modale_erreur.dart';
 import 'package:gwele/Services/NotificationService.dart';
 
 import '../Models/Equipe.dart';
@@ -26,17 +27,33 @@ class BoutonService {
   final ReunionService reunionService = ReunionService();
 
   // Bouton pour la connexion
-  Future<void> boutonConnexion(GlobalKey<FormState> formKey, String email,
-      String password, BuildContext context) async {
+  Future<void> boutonConnexion(
+      GlobalKey<FormState> formKey, String email, String password, BuildContext context) async {
     final isValid = formKey.currentState?.validate();
+
     if (isValid != null && isValid) {
       formKey.currentState?.save();
+
+      // Affichage de l'indicateur de chargement
+      showDialog(
+        context: context,
+        barrierDismissible: false, // Empêche de fermer la fenêtre pendant le chargement
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
       try {
         Utilisateur? utilisateur =
-            await authService.connexionAvecPassword(email, password, context);
+        await authService.connexionAvecPassword(email, password, context);
+
+        // Ferme l'indicateur de chargement
+        //Navigator.of(context).pop();
 
         if (utilisateur != null) {
-          // Afficher un message de succès
+          // Affiche un message de succès si la connexion est réussie
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -48,21 +65,36 @@ class BoutonService {
           );
         }
       } catch (e) {
-        // Gérer les erreurs et afficher une modale d'erreur
+        // Ferme l'indicateur de chargement
+        Navigator.of(context).pop();
+
+        // Vérifie si l'erreur concerne un email inexistant ou un mot de passe incorrect
+        /*String errorMessage;
+        if (e.toString().contains("utilisateur non trouvé")) {
+          errorMessage = "Cet email n'existe pas dans notre base de données.";
+        } else if (e.toString().contains("mot de passe incorrect")) {
+          errorMessage = "Le mot de passe est incorrect. Veuillez réessayer.";
+        } else {
+          errorMessage = "Problème lors de la connexion à votre compte.";
+        }
+
+        // Affiche une modale d'erreur avec le message approprié
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return const MessageModale(
+            return MessageModale(
               title: "Erreur",
-              content: "Problème lors de la connexion.",
+              content: errorMessage,
             );
           },
         );
-        print("le probleme est : ");
-        print(e);
+
+        // Log l'erreur pour le débogage
+        print("Le problème est : $e");*/
       }
     }
   }
+
 
   //Bouton pour enregistrer un manager
   Future<void> BtnAjouterManager(GlobalKey<FormState> formKey,
@@ -287,30 +319,68 @@ class BoutonService {
   }
 
   // Bouton pour ajouter une équipe
-  void boutonAjoutEquipe(GlobalKey<FormState> formKey,
-      BuildContext context, Equipe nouvelleEquipe) async {
+  void boutonAjoutEquipe(GlobalKey<FormState> formKey, BuildContext context, Equipe nouvelleEquipe) async {
     final isValid = formKey.currentState?.validate() ?? false;
 
-    if (!isValid) return; // Si le formulaire n'est pas valide, on arrête ici.
+    // Vérification si le leader est sélectionné
+    if (nouvelleEquipe.leaderId == null || nouvelleEquipe.leaderId == "") {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const MessageModaleErreur(
+              title: "Erreur",
+              content: "Veuillez choisir un leader"
+          );
+        },
+      );
+      return; // Arrête la fonction si aucune sélection de leader
+    }
+
+    // Vérification si l'adjoint est sélectionné
+    else if (nouvelleEquipe.secondId == null || nouvelleEquipe.secondId == "") {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const MessageModaleErreur(
+              title: "Erreur",
+              content: "Veuillez choisir un adjoint"
+          );
+        },
+      );
+      return; // Arrête la fonction si aucune sélection d'adjoint
+    }
+
+    // Validation du formulaire
+    if (!isValid) return;
 
     formKey.currentState?.save(); // Sauvegarde les valeurs du formulaire
 
     try {
-      final managerId = FirebaseAuth.instance.currentUser?.uid;
+      // Récupère l'ID du manager actuellement connecté
+      final managerId = await AuthService().idUtilisateurConnecte();
       nouvelleEquipe.managerId = managerId!;
-      // Appeler le service pour ajouter l'équipe
+
+      // Appelle le service pour ajouter l'équipe
       await EquipeService().ajouterEquipe(nouvelleEquipe);
-      // Afficher un message de succès
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Équipe ajoutée avec succès !'))
+
+      // Affiche un message de succès via un Dialog ou autre
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return MessageModale(
+            title: "Succès",
+            content: 'Équipe ${nouvelleEquipe.nom} ajoutée avec succès !',
+          );
+        },
       );
     } catch (e) {
-      // Afficher un message d'erreur si l'ajout échoue
+      // Affiche un message d'erreur dans un SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur lors de l\'ajout de l\'équipe : $e'))
+        SnackBar(content: Text('Erreur lors de l\'ajout de l\'équipe : $e')),
       );
     }
   }
+
 
   // Bouton pour ajouter un manager
   Future<void> boutonAjouterManager(GlobalKey<FormState> formKey,

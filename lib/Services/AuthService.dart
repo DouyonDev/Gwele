@@ -51,9 +51,15 @@ class AuthService {
             MaterialPageRoute(builder: (context) => Participant()),
           );
         } else {
-          const MessageModale(
-              title: "Erreur",
-              content: "Vous n'avez pas de role dans le système");
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const MessageModale(
+                title: "Erreur",
+                content: "Vous n'avez pas de rôle dans le système.",
+              );
+            },
+          );
         }
 
         return utilisateur;
@@ -61,31 +67,55 @@ class AuthService {
         throw Exception("Utilisateur non trouvé dans Firestore");
       }
     } catch (e) {
+      // Ferme l'indicateur de chargement si nécessaire (si utilisé dans l'appelant)
+      Navigator.of(context).pop();
+      // Affiche les erreurs à l'utilisateur via une modale
+      String errorMessage;
+
       if (e is FirebaseAuthException) {
         // Gestion des erreurs Firebase Auth
         switch (e.code) {
           case 'invalid-email':
-            print('L\'adresse e-mail est invalide.');
+            errorMessage = 'L\'adresse e-mail est invalide.';
             break;
           case 'user-disabled':
-            print('Le compte utilisateur a été désactivé.');
+            errorMessage = 'Le compte utilisateur a été désactivé.';
             break;
           case 'user-not-found':
-            print('Aucun utilisateur trouvé pour cet e-mail.');
+            errorMessage = 'Aucun utilisateur trouvé pour cet e-mail.';
             break;
           case 'wrong-password':
-            print('Mot de passe incorrect.');
+            errorMessage = 'Mot de passe incorrect.';
+            break;
+          case 'invalid-credential':
+            errorMessage = 'Les informations d\'identification fournies sont incorrectes, malformées ou ont expiré.'
+                '\nVeuillez revoir votre adresse e-mail et mot de passe.';
             break;
           default:
-            print('Erreur de connexion: ${e.message}');
+            errorMessage = 'Erreur de connexion: ${e.message}';
+            print(e);
         }
       } else {
         // Autres erreurs
-        print('Erreur inconnue: $e');
+        errorMessage = 'Erreur inconnue: $e';
       }
+
+      // Affiche un message d'erreur à l'utilisateur
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return MessageModale(
+            title: "Erreur",
+            content: errorMessage,
+          );
+        },
+      );
+
+      print('Erreur de connexion: $e');
     }
     return null;
   }
+
 
   //Fonction de deconnexion
   Future<void> deconnexion(BuildContext context) async {
@@ -102,6 +132,15 @@ class AuthService {
       final userData =
           await _firestore.collection('utilisateurs').doc(user.uid).get();
       return userData.data(); // Retourne les données utilisateur
+    }
+    return null; // Si l'utilisateur n'est pas connecté
+  }
+
+  //Fonction pour obtenir l'id de l'utilisateur connecté
+  Future<String?> idUtilisateurConnecte() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user.uid; // Retourne l'ID de l'utilisateur connecté
     }
     return null; // Si l'utilisateur n'est pas connecté
   }

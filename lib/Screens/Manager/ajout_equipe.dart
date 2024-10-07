@@ -113,6 +113,12 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                         prefixIcon: Icon(Icons.group),
                       ),
                       style: const TextStyle(fontSize: 16, color: secondaryColor),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Le nom de l\'équipe ne doit pas être vide';  // Message d'erreur si vide
+                        }
+                        return null;  // Retourne null si la validation est correcte
+                      },
                       onSaved: (value) {
                         _nomEquipe = value!;
                       },
@@ -185,6 +191,7 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                         if (_formKey.currentState!.validate()) {
                           // Si le formulaire est valide, enregistrer les données
                           _formKey.currentState!.save(); // Sauvegarde des données du formulaire
+
                           Equipe nouvelleEquipe = Equipe(
                             id: '',
                             nom: _nomEquipe,
