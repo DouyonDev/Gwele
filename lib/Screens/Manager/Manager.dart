@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:gwele/Screens/Lead/Les_offres.dart';
 import 'package:gwele/Screens/Lead/Les_taches.dart';
-import 'package:gwele/Screens/Lead/ajout_reunion.dart';
-import 'package:gwele/Screens/Manager/ajout_Membre.dart';
-import 'package:gwele/Screens/Manager/ajout_equipe.dart';
 import 'package:gwele/Screens/Lead/les_reunions.dart';
+import 'package:gwele/Screens/Manager/mes_comptables.dart';
 import 'package:gwele/Screens/Manager/mes_equipes.dart';
-import 'package:gwele/Screens/Participant/ajout_tache.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
 import '../profil.dart';
 
@@ -26,6 +23,8 @@ class ManagerState extends State<Manager> {
     LesTaches(),
     MesEquipes(),
     Profil(),
+    LesOffres(),
+    MesComptables(),
   ];
 
   // Méthode pour changer de page à partir de la barre de navigation
@@ -42,8 +41,87 @@ class ManagerState extends State<Manager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Manager Dashboard'),
+        backgroundColor: primaryColor,
+      ),
       extendBody: true,
       body: _pages[_selectedIndex], // Affiche la page correspondant à l'index sélectionné
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: primaryColor,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            optionDrawer(
+              'Accueil',
+              Icon(Icons.home),
+                  () {
+                _onItemTapped(0);
+                Navigator.pop(context);
+              },
+            ),
+            optionDrawer(
+              'Tâches',
+              Icon(Icons.task),
+                  () {
+                _onItemTapped(1);
+                Navigator.pop(context);
+              },
+            ),
+            optionDrawer(
+              'Équipes',
+              Icon(Icons.group),
+                  () {
+                _onItemTapped(2);
+                Navigator.pop(context);
+              },
+            ),
+            optionDrawer(
+              'Offres',
+              Icon(Icons.group),
+                  () {
+                _onItemTapped(4);
+                Navigator.pop(context);
+              },
+            ),
+            optionDrawer(
+              'Comptables',
+              Icon(Icons.countertops),
+                  () {
+                _onItemTapped(5);
+                Navigator.pop(context);
+              },
+            ),
+            optionDrawer(
+              'Profil',
+              Icon(Icons.person),
+                  () {
+                _onItemTapped(3);
+                Navigator.pop(context);
+              },
+            ),
+            optionDrawer(
+              'Déconnexion',
+              Icon(Icons.exit_to_app),
+                  () {
+                // Ajoutez votre logique de déconnexion ici
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),/*
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedIndex,
         height: 60.0,
@@ -61,7 +139,16 @@ class ManagerState extends State<Manager> {
         onTap: (index) {
           _onItemTapped(index); // Appelle la méthode pour changer de page
         },
-      ),
+      ),*/
     );
   }
+
+  Widget optionDrawer(String label, Icon icon, VoidCallback action) {
+    return ListTile(
+      leading: icon,
+      title: Text(label),
+      onTap: action, // Ici, on passe l'action (un callback) au onTap
+    );
+  }
+
 }

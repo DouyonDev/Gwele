@@ -8,16 +8,16 @@ import 'package:gwele/Services/UtilisateurService.dart';
 
 import '../Widgets/affichage_boutons_selection_participant.dart';
 
-class DetailEquipe extends StatefulWidget {
-  final Utilisateur comptableInfo;
+class DetailComptable extends StatefulWidget {
+  final Equipe comptableInfo;
 
-  const DetailEquipe({Key? key, required this.comptableInfo}) : super(key: key);
+  const DetailComptable({Key? key, required this.comptableInfo}) : super(key: key);
 
   @override
-  _DetailEquipeState createState() => _DetailEquipeState();
+  _DetailComptableState createState() => _DetailComptableState();
 }
 
-class _DetailEquipeState extends State<DetailEquipe> {
+class _DetailComptableState extends State<DetailComptable> {
   Future<List<Utilisateur>>? _membresFuture;
   Utilisateur? leader;
   Utilisateur? second;
@@ -27,6 +27,52 @@ class _DetailEquipeState extends State<DetailEquipe> {
   @override
   void initState() {
     super.initState();
+    getLeadSecond();
+    // Récupère les informations des membres dès le début
+    _membresFuture = recupererMembres(widget.comptableInfo.membres);
+  }
+
+  // Récupérer les informations du leader et du second
+  Future<void> getLeadSecond() async {
+    // Vérification de leaderId
+    if (widget.comptableInfo.leaderId != null && widget.comptableInfo.leaderId!.isNotEmpty) {
+      try {
+        final leaderData = await UtilisateurService().utilisateurParId(widget.comptableInfo.leaderId);
+        setState(() {
+          leader = leaderData; // Assigner l'utilisateur récupéré
+        });
+      } catch (e) {
+        print("Erreur lors de la récupération du leader: $e");
+        setState(() {
+          leader = null; // Assigner null si une erreur survient
+        });
+      }
+    } else {
+      print("Leader ID est vide ou null");
+      setState(() {
+        leader = null; // Assigner null si leaderId est vide
+      });
+    }
+
+    // Vérification de secondId
+    if (widget.comptableInfo.secondId != null && widget.comptableInfo.secondId!.isNotEmpty) {
+      try {
+        final secondData = await UtilisateurService().utilisateurParId(widget.comptableInfo.secondId!);
+        setState(() {
+          second = secondData; // Assigner l'utilisateur récupéré
+        });
+      } catch (e) {
+        print("Erreur lors de la récupération du second: $e");
+        setState(() {
+          second = null; // Assigner null si une erreur survient
+        });
+      }
+    } else {
+      print("Second ID est vide ou null");
+      setState(() {
+        second = null; // Assigner null si secondId est vide
+      });
+    }
   }
 
 
@@ -90,7 +136,9 @@ class _DetailEquipeState extends State<DetailEquipe> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Date de création :',
+              'Date de création : ${widget.comptableInfo.dateCreation?.day}/'
+                  '${widget.comptableInfo.dateCreation?.month}/'
+                  '${widget.comptableInfo.dateCreation?.year}',
               style: const TextStyle(
                 fontSize: 12.0,
                 color: Colors.grey,
@@ -155,15 +203,22 @@ class _DetailEquipeState extends State<DetailEquipe> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Les membres :',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            AffichageBoutonSelectionParticipant(
+              title: 'Choisissez l\'adjoint du groupe',
+              buttonText: 'Ajouter',
+              onParticipantSelected: onParticipantSelected,
+              setState: () => setState(() {}), // Appel à setState dans le parent
+              fetchParticipants: fetchParticipants,
             ),
           ],
         ),
@@ -243,5 +298,26 @@ class _DetailEquipeState extends State<DetailEquipe> {
     return await FirebaseFirestore.instance.collection('utilisateurs').get();
   }
 
-
+  // Fonction pour ajouter un membre à la liste des participants
+  void onParticipantSelected(String membreID) async {
+    widget.comptableInfo.membres.add(membreID);
+    EquipeService().mettreAJourEquipe(widget.comptableInfo);
+    try {
+      Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(membreID);
+      if (utilisateur != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('membre sélectionné: ${utilisateur.prenom} ${utilisateur.nom}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Utilisateur non trouvé')),
+        );
+      }
+    } catch (e) {
+      print('Erreur lors de la sélection du membre: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur lors de la récupération du membre')),
+      );
+    }
+  }
 }
