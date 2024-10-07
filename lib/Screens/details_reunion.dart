@@ -258,6 +258,7 @@ class DetailReunionPage extends StatelessWidget {
   // Bloc Style
   Widget blocStyle(Widget bloc) {
     return Container(
+      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),

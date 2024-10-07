@@ -408,9 +408,14 @@ class _AjoutReunionState extends State<AjoutReunion> {
                             Align(
                               // Aligner l'icône à droite
                               alignment: Alignment.centerRight,
-                              child: ElevatedButton(
+                              child: IconButton(
                                 onPressed: () => BoutonService().boutonAjouterOrdreDuJour(context),
-                                child: const Text('Ajouter Ordre du Jour'),
+                                icon: const Icon(Icons.add),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor.withOpacity(
+                                      0.6), // Exemple avec 50% d'opacité
+                                ),
+                                color: primaryColor,
                               ),
                             ),
                           ],
@@ -475,7 +480,15 @@ class _AjoutReunionState extends State<AjoutReunion> {
                         );
                         //_formKey.currentState!.reset();
                       },
-                      child: const Text('Ajouter la réunion'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                    ),
+                      child: const Text(
+                          'Programmer la réunion',
+                        style: TextStyle(
+                          color: thirdColor,
+                        ),
+                      ),
                     ),
                   ],
                 ),

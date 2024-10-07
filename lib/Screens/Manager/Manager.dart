@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:gwele/Screens/Lead/Les_offres.dart';
+import 'package:gwele/Screens/Lead/Les_taches.dart';
 import 'package:gwele/Screens/Lead/ajout_reunion.dart';
 import 'package:gwele/Screens/Manager/ajout_Membre.dart';
 import 'package:gwele/Screens/Manager/ajout_equipe.dart';
+import 'package:gwele/Screens/Lead/les_reunions.dart';
+import 'package:gwele/Screens/Manager/mes_equipes.dart';
 import 'package:gwele/Screens/Participant/ajout_tache.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
 import '../profil.dart';
@@ -18,9 +22,9 @@ class ManagerState extends State<Manager> {
 
   // Liste des widgets pour chaque page
   static final List<Widget> _pages = <Widget>[
-    AjoutEquipe(),
-    AjoutTache(),
-    AjoutMembre(),
+    LesReunions(),
+    LesTaches(),
+    MesEquipes(),
     Profil(),
   ];
 

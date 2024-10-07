@@ -90,5 +90,22 @@ class UtilisateurService {
     }
   }
 
+  //
+  Future<List<Utilisateur>> recupererMembres(List<String> membresIds) async {
+    List<Utilisateur> membres = [];
+
+    for (String id in membresIds) {
+      DocumentSnapshot doc = await FirebaseFirestore.instance.collection('utilisateurs').doc(id).get();
+      if (doc.exists) {
+        // Conversion des données du document en un objet de type Utilisateur
+        Utilisateur utilisateur = Utilisateur.fromDocument(doc.data() as Map<String, dynamic>, doc.id);
+        membres.add(utilisateur);
+      }
+    }
+
+    return membres;
+  }
+
+
 
 }

@@ -21,13 +21,12 @@ class EquipeService {
     }
   }
 
-
   // Récupérer une équipe par son ID
   Future<Equipe?> getEquipeById(String id) async {
     try {
       DocumentSnapshot doc = await equipeCollection.doc(id).get();
       if (doc.exists) {
-        return Equipe.fromDocument(doc);
+        return Equipe.fromDocument(doc.data() as Map<String, dynamic>, doc.id); // Utilise la méthode fromDocument
       } else {
         print('Équipe non trouvée pour l\'ID: $id');
         return null;
@@ -43,7 +42,7 @@ class EquipeService {
     try {
       return equipeCollection.snapshots().map((snapshot) {
         return snapshot.docs.map((doc) {
-          return Equipe.fromDocument(doc);
+          return Equipe.fromDocument(doc.data() as Map<String, dynamic>, doc.id);
         }).toList();
       });
     } catch (e) {

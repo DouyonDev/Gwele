@@ -21,18 +21,16 @@ class Equipe {
   });
 
   // Méthode pour créer une équipe depuis un DocumentSnapshot Firestore
-  factory Equipe.fromDocument(DocumentSnapshot doc) {
+  factory Equipe.fromDocument(Map<String, dynamic> data, String docId) {
     return Equipe(
-      id: doc.id,
-      nom: doc['nom'] ?? '', // Valeur par défaut si le champ n'existe pas
-      leaderId: doc['leaderId'] ?? '', // Valeur par défaut
-      secondId: doc['secondId'], // Peut être null
-      managerId: doc['secondId'] ?? '', // Peut être null
-      membres: doc['membres'] != null
-          ? List<String>.from(doc['membres'])
-          : [], // Si pas de membres, retourne une liste vide
-      dateCreation: (doc['dateCreation'] != null)
-          ? (doc['dateCreation'] as Timestamp).toDate()
+      id: docId,
+      nom: data['nom'] ?? '', // Valeur par défaut si le champ n'existe pas
+      leaderId: data['leaderId'] ?? '', // Valeur par défaut si le champ n'existe pas
+      secondId: data['secondId'], // Peut être null
+      managerId: data['managerId'] ?? '', // Valeur par défaut si le champ n'existe pas
+      membres: data['membres'] != null ? List<String>.from(data['membres']) : [], // Si pas de membres, retourne une liste vide
+      dateCreation: data['dateCreation'] != null
+          ? (data['dateCreation'] as Timestamp).toDate()
           : null, // Conversion Timestamp Firestore en DateTime
     );
   }
