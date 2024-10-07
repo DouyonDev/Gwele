@@ -102,8 +102,6 @@ class _MesComptablesState extends State<MesComptables> {
                     final data = doc.data() as Map<String, dynamic>;
                     // Créez un objet Tache à partir des données
                     Utilisateur comptable = Utilisateur.fromDocument(data, doc.id);
-                    print("les équipes");
-                    print(Equipe);
                     return AffichageComptable(comptableData: comptable); // Passez l'objet Reunion ici
                   }).toList(),
                 );

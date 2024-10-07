@@ -24,6 +24,16 @@ class AjoutComptableState extends State<AjoutComptable> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: backgroundColor,
+        foregroundColor: secondaryColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: secondaryColor), // Icône retour
+          onPressed: () {
+            Navigator.pop(context); // Retourner à l'écran précédent
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(40.0),

@@ -9,7 +9,7 @@ import 'package:gwele/Services/UtilisateurService.dart';
 import '../Widgets/affichage_boutons_selection_participant.dart';
 
 class DetailComptable extends StatefulWidget {
-  final Equipe comptableInfo;
+  final Utilisateur comptableInfo;
 
   const DetailComptable({Key? key, required this.comptableInfo}) : super(key: key);
 
@@ -18,63 +18,6 @@ class DetailComptable extends StatefulWidget {
 }
 
 class _DetailComptableState extends State<DetailComptable> {
-  Future<List<Utilisateur>>? _membresFuture;
-  Utilisateur? leader;
-  Utilisateur? second;
-  Future<Utilisateur>? _futureLead;
-  Future<Utilisateur>? _futureSecond;
-
-  @override
-  void initState() {
-    super.initState();
-    getLeadSecond();
-    // Récupère les informations des membres dès le début
-    _membresFuture = recupererMembres(widget.comptableInfo.membres);
-  }
-
-  // Récupérer les informations du leader et du second
-  Future<void> getLeadSecond() async {
-    // Vérification de leaderId
-    if (widget.comptableInfo.leaderId != null && widget.comptableInfo.leaderId!.isNotEmpty) {
-      try {
-        final leaderData = await UtilisateurService().utilisateurParId(widget.comptableInfo.leaderId);
-        setState(() {
-          leader = leaderData; // Assigner l'utilisateur récupéré
-        });
-      } catch (e) {
-        print("Erreur lors de la récupération du leader: $e");
-        setState(() {
-          leader = null; // Assigner null si une erreur survient
-        });
-      }
-    } else {
-      print("Leader ID est vide ou null");
-      setState(() {
-        leader = null; // Assigner null si leaderId est vide
-      });
-    }
-
-    // Vérification de secondId
-    if (widget.comptableInfo.secondId != null && widget.comptableInfo.secondId!.isNotEmpty) {
-      try {
-        final secondData = await UtilisateurService().utilisateurParId(widget.comptableInfo.secondId!);
-        setState(() {
-          second = secondData; // Assigner l'utilisateur récupéré
-        });
-      } catch (e) {
-        print("Erreur lors de la récupération du second: $e");
-        setState(() {
-          second = null; // Assigner null si une erreur survient
-        });
-      }
-    } else {
-      print("Second ID est vide ou null");
-      setState(() {
-        second = null; // Assigner null si secondId est vide
-      });
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +26,7 @@ class _DetailComptableState extends State<DetailComptable> {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         title: const Text(
-          'Détails de l\'équipe',
+          'Informations du comptable',
           style: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,
@@ -102,12 +45,6 @@ class _DetailComptableState extends State<DetailComptable> {
                     // Premier Bloc: Titre, Date, Statut, Heure, Salle
                     blocStyle(_buildFirstBlock()),
                     const SizedBox(height: 20),
-                    // Quatrième Bloc: Description de l'équipe
-                    blocStyle(_buildLeadSecondBlock()),
-                    const SizedBox(height: 20),
-                    // Deuxième Bloc: Liste des documents
-                    blocStyle(_buildMembresBlock()),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -124,7 +61,7 @@ class _DetailComptableState extends State<DetailComptable> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.comptableInfo.nom ?? 'Sans titre',
+          '${widget.comptableInfo.prenom ?? 'Sans nom'} ${widget.comptableInfo.nom ?? 'Sans nom'}',
           style: const TextStyle(
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -132,14 +69,12 @@ class _DetailComptableState extends State<DetailComptable> {
           ),
         ),
         const SizedBox(height: 8.0),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Date de création : ${widget.comptableInfo.dateCreation?.day}/'
-                  '${widget.comptableInfo.dateCreation?.month}/'
-                  '${widget.comptableInfo.dateCreation?.year}',
-              style: const TextStyle(
+              'Date de création :',
+              style: TextStyle(
                 fontSize: 12.0,
                 color: Colors.grey,
               ),
@@ -152,110 +87,6 @@ class _DetailComptableState extends State<DetailComptable> {
     );
   }
 
-  // Bloc: Description de l'équipe
-  Widget _buildLeadSecondBlock() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Leader :',
-          style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        ListTile(
-          leading: const CircleAvatar(
-          radius: 40.0,
-          backgroundImage: AssetImage('assets/images/boy.png') as ImageProvider,
-          ),
-          title: Text(
-          '${leader?.prenom} ${leader?.nom}',
-          style: const TextStyle(fontSize: 16.0),
-          ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'Adjoint :',
-          style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-          ListTile(
-            leading: const CircleAvatar(
-              radius: 40.0,
-              backgroundImage: AssetImage('assets/images/boy.png') as ImageProvider,
-            ),
-            title: Text(
-              '${second?.prenom} ${second?.nom}',
-              style: const TextStyle(fontSize: 16.0),
-            ),
-          )
-      ],
-    );
-  }
-
-  // Bloc: Liste des membres de l'équipe
-  Widget _buildMembresBlock() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Les membres :',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            AffichageBoutonSelectionParticipant(
-              title: 'Choisissez l\'adjoint du groupe',
-              buttonText: 'Ajouter',
-              onParticipantSelected: onParticipantSelected,
-              setState: () => setState(() {}), // Appel à setState dans le parent
-              fetchParticipants: fetchParticipants,
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-
-        // FutureBuilder pour charger les membres
-        FutureBuilder<List<Utilisateur>>(
-          future: _membresFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(); // Affiche un indicateur de chargement
-            } else if (snapshot.hasError) {
-              return const Text('Erreur lors du chargement des membres');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Text('Aucun membre trouvé');
-            } else {
-              // Affiche la liste des membres
-              return Column(
-                children: snapshot.data!.map((membre) {
-                  return ListTile(
-                    leading: const CircleAvatar(
-                      radius: 40.0,
-                      backgroundImage: AssetImage('assets/images/boy.png') as ImageProvider,
-                    ),
-                    title: Text(
-                      '${membre.prenom} ${membre.nom}',
-                      style: const TextStyle(fontSize: 16.0),
-                    ),
-                  );
-                }).toList(),
-              );
-            }
-          },
-        ),
-      ],
-    );
-  }
 
   // Bloc Style
   Widget blocStyle(Widget bloc) {
@@ -280,44 +111,6 @@ class _DetailComptableState extends State<DetailComptable> {
     );
   }
 
-  // Fonction pour récupérer les membres
-  Future<List<Utilisateur>> recupererMembres(List<String> membresIds) async {
-    List<Utilisateur> membres = [];
 
-    for (String id in membresIds) {
-      Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(id);
-      if (utilisateur != null) {
-        membres.add(utilisateur);
-      }
-    }
 
-    return membres;
-  }
-
-  Future<QuerySnapshot> fetchParticipants() async {
-    return await FirebaseFirestore.instance.collection('utilisateurs').get();
-  }
-
-  // Fonction pour ajouter un membre à la liste des participants
-  void onParticipantSelected(String membreID) async {
-    widget.comptableInfo.membres.add(membreID);
-    EquipeService().mettreAJourEquipe(widget.comptableInfo);
-    try {
-      Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(membreID);
-      if (utilisateur != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('membre sélectionné: ${utilisateur.prenom} ${utilisateur.nom}')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Utilisateur non trouvé')),
-        );
-      }
-    } catch (e) {
-      print('Erreur lors de la sélection du membre: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erreur lors de la récupération du membre')),
-      );
-    }
-  }
 }

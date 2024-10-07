@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Screens/Manager/details_comptable.dart';
 import 'package:gwele/Screens/Manager/details_equipe.dart';
 import 'package:gwele/Services/UtilsService.dart';
 
@@ -21,7 +22,7 @@ class AffichageComptable extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailEquipe(comptableInfo: comptableData,),
+            builder: (context) => DetailComptable(comptableInfo: comptableData,),
           ),
         );
       },
@@ -44,12 +45,15 @@ class AffichageComptable extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                comptableData.nom ?? 'Sans titre',
-                style: const TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: secondaryColor,
+              ListTile(
+                leading: const CircleAvatar(
+                  radius: 40.0,
+                  backgroundImage: AssetImage('assets/images/boy.png') as ImageProvider,
+                ),
+                subtitle: Text('${comptableData.email}'),
+                title: Text(
+                  '${comptableData?.prenom} ${comptableData?.nom}',
+                  style: const TextStyle(fontSize: 16.0),
                 ),
               ),
             ],
