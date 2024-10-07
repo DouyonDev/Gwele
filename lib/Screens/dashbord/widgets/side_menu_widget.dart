@@ -1,65 +1,108 @@
-import '../const/constant.dart';
 import 'package:flutter/material.dart';
-import '../model/menu_model.dart';
+
+import '../../../Colors.dart';
 
 class SideMenuWidget extends StatefulWidget {
-  const SideMenuWidget({super.key});
+  final Function(int) onItemSelected; // Callback pour notifier le changement de page
+
+  const SideMenuWidget({super.key, required this.onItemSelected});
 
   @override
-  State<SideMenuWidget> createState() => _SideMenuWidgetState();
+  _SideMenuWidgetState createState() => _SideMenuWidgetState();
 }
 
 class _SideMenuWidgetState extends State<SideMenuWidget> {
-  int selectedIndex = 0;
+  int _selectedIndex = 0; // Index pour suivre l'élément sélectionné
+
+  // Méthode pour gérer la sélection d'un élément
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    widget.onItemSelected(index);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final data = SideMenuData();
-
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
-      color: const Color(0xFF171821),
-      child: ListView.builder(
-        itemCount: data.menu.length,
-        itemBuilder: (context, index) => buildMenuEntry(data, index),
+      color: primaryColor, // Appliquer la couleur de fond du drawer
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: primaryColor, // Appliquer la couleur primaire au header
+            ),
+            child: Text(
+              'Menu',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+          ),
+          // Options du drawer avec gestion de la couleur de sélection
+          optionDrawer(
+            'Accueil',
+            Icon(Icons.home),
+                () => _onItemTapped(0),
+            isSelected: _selectedIndex == 0, // Vérifie si l'option est sélectionnée
+          ),
+          optionDrawer(
+            'Tâches',
+            Icon(Icons.task),
+                () => _onItemTapped(1),
+            isSelected: _selectedIndex == 1,
+          ),
+          optionDrawer(
+            'Équipes',
+            Icon(Icons.group),
+                () => _onItemTapped(2),
+            isSelected: _selectedIndex == 2,
+          ),
+          optionDrawer(
+            'Offres',
+            Icon(Icons.local_offer),
+                () => _onItemTapped(3),
+            isSelected: _selectedIndex == 3,
+          ),
+          optionDrawer(
+            'Comptables',
+            Icon(Icons.account_balance),
+                () => _onItemTapped(4),
+            isSelected: _selectedIndex == 4,
+          ),
+          optionDrawer(
+            'Profil',
+            Icon(Icons.person),
+                () => _onItemTapped(5),
+            isSelected: _selectedIndex == 5,
+          ),
+          optionDrawer(
+            'Déconnexion',
+            Icon(Icons.exit_to_app),
+                () {
+              // Logique de déconnexion
+            },
+            isSelected: false, // Déconnexion n'est jamais sélectionnée
+          ),
+        ],
       ),
     );
   }
 
-  Widget buildMenuEntry(SideMenuData data, int index) {
-    final isSelected = selectedIndex == index;
-
+  // Méthode pour générer un ListTile avec gestion de la sélection
+  Widget optionDrawer(String label, Icon icon, VoidCallback action, {bool isSelected = false}) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(6.0),
-        ),
-        color: isSelected ? selectionColor : Colors.transparent,
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        color: isSelected ? backgroundColor : Colors.transparent, // Couleur de l'option sélectionnée
       ),
-      child: InkWell(
-        onTap: () => setState(() {
-          selectedIndex = index;
-        }),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-              child: Icon(
-                data.menu[index].icon,
-                color: isSelected ? Colors.black : Colors.grey,
-              ),
-            ),
-            Text(
-              data.menu[index].title,
-              style: TextStyle(
-                fontSize: 16,
-                color: isSelected ? Colors.black : Colors.grey,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-            )
-          ],
-        ),
+      child: ListTile(
+        leading: icon,
+        title: Text(label, style: TextStyle(color: isSelected ? primaryColor : secondaryColor)),
+        onTap: action, // Action lors du clic
       ),
     );
   }

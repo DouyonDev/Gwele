@@ -1,12 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:gwele/Screens/Lead/Les_offres.dart';
 import 'package:gwele/Screens/Lead/Les_taches.dart';
 import 'package:gwele/Screens/Lead/les_reunions.dart';
 import 'package:gwele/Screens/Manager/mes_comptables.dart';
 import 'package:gwele/Screens/Manager/mes_equipes.dart';
-import 'package:gwele/Screens/dashbord/const/constant.dart';
+import '../dashbord/util/responsive.dart';
+import '../dashbord/widgets/side_menu_widget.dart';
+import '../dashbord/widgets/summary_widget.dart';
 import '../profil.dart';
 
 class Manager extends StatefulWidget {
@@ -18,7 +18,7 @@ class ManagerState extends State<Manager> {
   int _selectedIndex = 0; // Index pour suivre l'élément sélectionné
 
   // Liste des widgets pour chaque page
-  static final List<Widget> _pages = <Widget>[
+  final List<Widget> _pages = <Widget>[
     LesReunions(),
     LesTaches(),
     MesEquipes(),
@@ -40,6 +40,61 @@ class ManagerState extends State<Manager> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = Responsive.isDesktop(context);  // Vérifie si l'interface est sur un écran de bureau (desktop)
+
+    return Scaffold(
+      appBar: !isDesktop
+          ? AppBar( // Ajouter une AppBar sur mobile avec un bouton pour ouvrir le drawer
+        title: Text('Manager'),
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer(); // Ouvre le drawer sur mobile
+            },
+          ),
+        ),
+      )
+          : null, // Pas besoin de AppBar sur Desktop
+      drawer: !isDesktop
+          ? SizedBox(
+        width: 250,
+        child: SideMenuWidget(onItemSelected: _onItemTapped),
+      )
+          : null,
+      endDrawer: Responsive.isMobile(context)
+          ? SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: const SummaryWidget(),
+      )
+          : null,
+      body: SafeArea(
+        child: Row(
+          children: [
+            if (isDesktop)
+              Expanded(
+                flex: 2,
+                child: SizedBox(
+                  child: SideMenuWidget(onItemSelected: _onItemTapped),
+                ),
+              ),
+            Expanded(
+              flex: 7,
+              child: _pages[_selectedIndex],  // Affiche la page correspondante à l'index
+            ),
+            if (isDesktop)
+              const Expanded(
+                flex: 3,
+                child: SummaryWidget(),  // Panneau de résumé à droite sur Desktop
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/*Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manager Dashboard'),
@@ -121,7 +176,7 @@ class ManagerState extends State<Manager> {
             ),
           ],
         ),
-      ),/*
+      ),
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedIndex,
         height: 60.0,
@@ -139,16 +194,15 @@ class ManagerState extends State<Manager> {
         onTap: (index) {
           _onItemTapped(index); // Appelle la méthode pour changer de page
         },
-      ),*/
+      ),
     );
-  }
+  }*/
 
-  Widget optionDrawer(String label, Icon icon, VoidCallback action) {
+  /*Widget optionDrawer(String label, Icon icon, VoidCallback action) {
     return ListTile(
       leading: icon,
       title: Text(label),
       onTap: action, // Ici, on passe l'action (un callback) au onTap
     );
-  }
+  }*/
 
-}

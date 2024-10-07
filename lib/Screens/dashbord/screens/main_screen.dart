@@ -15,7 +15,7 @@ class MainScreen extends StatelessWidget {
       drawer: !isDesktop
           ? const SizedBox(
               width: 250,
-              child: SideMenuWidget(),
+              child: DashboardWidget(),
             )
           : null,
       endDrawer: Responsive.isMobile(context)
@@ -28,18 +28,18 @@ class MainScreen extends StatelessWidget {
         child: Row(
           children: [
             if (isDesktop)
-              Expanded(
+              const Expanded(
                 flex: 2,
                 child: SizedBox(
-                  child: SideMenuWidget(),
+                  child: DashboardWidget(),
                 ),
               ),
-            Expanded(
+            const Expanded(
               flex: 7,
               child: DashboardWidget(),
             ),
             if (isDesktop)
-              Expanded(
+              const Expanded(
                 flex: 3,
                 child: SummaryWidget(),
               ),
