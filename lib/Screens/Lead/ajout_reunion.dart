@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:gwele/Services/FichiersService.dart';
+import 'package:gwele/Services/UtilsService.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,7 @@ import 'package:gwele/Screens/Widgets/affichage_boutons_selection_participant.da
 import 'package:gwele/Services/UtilisateurService.dart';
 import '../../Colors.dart';
 import '../../Models/Reunion.dart';
+import '../../Services/AuthService.dart';
 import '../../Services/BoutonService.dart';
 
 class AjoutReunion extends StatefulWidget {
@@ -36,8 +38,56 @@ class _AjoutReunionState extends State<AjoutReunion> {
   List<File> ordreDuJour = []; // Liste des fichiers selectionnes
 
   // Fonction pour récupérer la liste des participants depuis Firestore
-  Future<QuerySnapshot> fetchParticipants() async {
-    return await FirebaseFirestore.instance.collection('utilisateurs').get();
+  Future<QuerySnapshot> listeParticipantPourReunion() async {
+    final currentUserId = await AuthService().idUtilisateurConnecte();
+
+    if (currentUserId == null) {
+      throw Exception("Aucun utilisateur connecté");
+    }
+
+    // Récupérer les informations de l'utilisateur connecté
+    Utilisateur? currentUserInfo = await UtilisateurService().utilisateurParId(currentUserId);
+
+    if (currentUserInfo == null) {
+      throw Exception("L'utilisateur connecté n'existe pas dans la base de données");
+    }
+
+    //final userData = userDoc.data();
+    final String role = currentUserInfo.role ?? ''; // Le rôle de l'utilisateur (e.g., 'MANAGER', 'LEADER')
+
+    if (role == 'MANAGER') {
+      // Si l'utilisateur est un MANAGER, récupérer les utilisateurs qu'il a ajoutés
+      return await FirebaseFirestore.instance
+          .collection('utilisateurs')
+          .where('userMere', isEqualTo: currentUserId)
+          .get();
+    } else if (role == 'MEMBRE') {
+      // Si l'utilisateur est un LEADER, récupérer l'équipe dont il est leader
+      final QuerySnapshot equipesQuery = await FirebaseFirestore.instance
+          .collection('equipes')
+          .where('idLeader', isEqualTo: currentUserId)
+          .get();
+
+      if (equipesQuery.docs.isEmpty) {
+        throw Exception("Aucune équipe trouvée pour ce leader");
+      }
+
+      // Récupérer l'ID des membres de l'équipe
+      final List<dynamic> membresIds = equipesQuery.docs.first['membres'];
+
+      // Vérifier que la liste n'est pas vide
+      if (membresIds.isEmpty) {
+        throw Exception("L'équipe n'a pas de membres");
+      }
+
+      // Récupérer les documents des utilisateurs dont l'ID est dans la liste des membres
+      return await FirebaseFirestore.instance
+          .collection('utilisateurs')
+          .where(FieldPath.documentId, whereIn: membresIds)
+          .get();
+    } else {
+      throw Exception("Rôle non géré : $role");
+    }
   }
 
   // Fonction pour ajouter un membre à la liste des participants
@@ -64,37 +114,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
     }
   }
 
-  // Sélection de la date
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _dateReunion,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        _dateReunion = picked;
-      });
-    }
-  }
 
-  // Sélection de l'heure
-  Future<void> _selectTime(BuildContext context, bool isStart) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        if (isStart) {
-          _heureDebut = picked;
-        } else {
-          _heureFin = picked;
-        }
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +164,12 @@ class _AjoutReunionState extends State<AjoutReunion> {
                         color: secondaryColor,
                         fontSize: 16,
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Le titre de la reunion ne doit pas être vide';  // Message d'erreur si vide
+                        }
+                        return null;  // Retourne null si la validation est correcte
+                      },
                       onSaved: (value) {
                         _titre = value!;
                       },
@@ -161,6 +187,12 @@ class _AjoutReunionState extends State<AjoutReunion> {
                         color: secondaryColor,
                         fontSize: 16,
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez donnez une description a la reunion';  // Message d'erreur si vide
+                        }
+                        return null;  // Retourne null si la validation est correcte
+                      },
                       maxLines: 3,
                       onSaved: (value) {
                         _description = value!;
@@ -180,6 +212,12 @@ class _AjoutReunionState extends State<AjoutReunion> {
                         color: secondaryColor,
                         fontSize: 16,
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez donnée le lieu';  // Message d'erreur si vide
+                        }
+                        return null;  // Retourne null si la validation est correcte
+                      },
                       onSaved: (value) {
                         _lieu = value!;
                       },
@@ -189,14 +227,21 @@ class _AjoutReunionState extends State<AjoutReunion> {
                     // Date de la réunion
                     ListTile(
                       title: Text(
-                        'Date: ${_dateReunion.toLocal()}',
+                        'Date: ${UtilsService().formatDate(_dateReunion.toLocal())}',
                         style: const TextStyle(color: secondaryColor),
                       ),
                       trailing: const Icon(
                           Icons.calendar_today,
                           color: primaryColor,
                       ),
-                      onTap: () => _selectDate(context),
+                      onTap: () {
+                        // Appel à la fonction selectDate du fichier DateService
+                        UtilsService().selectDate(context, _dateReunion, (DateTime pickedDate) {
+                          setState(() {
+                            _dateReunion = pickedDate;  // Met à jour la date sélectionnée
+                          });
+                        });
+                      },
                     ),
                     const SizedBox(height: 20),
 
@@ -212,7 +257,13 @@ class _AjoutReunionState extends State<AjoutReunion> {
                           Icons.access_time,
                           color: primaryColor,
                       ),
-                      onTap: () => _selectTime(context, true),
+                      onTap: () {
+                        UtilsService().selectTime(context, true, (TimeOfDay picked) {
+                          setState(() {
+                            _heureDebut = picked;
+                          });
+                        });
+                      },
                     ),
                     const SizedBox(height: 20),
 
@@ -228,7 +279,13 @@ class _AjoutReunionState extends State<AjoutReunion> {
                           Icons.access_time,
                           color: primaryColor,
                       ),
-                      onTap: () => _selectTime(context, false),
+                      onTap: () {
+                        UtilsService().selectTime(context, true, (TimeOfDay picked) {
+                          setState(() {
+                            _heureFin = picked;
+                          });
+                        });
+                      },
                     ),
                     const SizedBox(height: 20),
 
@@ -258,7 +315,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
                                 buttonText: 'Ajouter',
                                 onParticipantSelected: onParticipantSelected,
                                 setState: () => setState(() {}), // Appel à setState dans le parent
-                                fetchParticipants: fetchParticipants,
+                                fetchParticipants: listeParticipantPourReunion,
                               ),
                             ),
                           ],

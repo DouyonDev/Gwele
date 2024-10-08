@@ -154,10 +154,10 @@ class BoutonService {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      final user = FirebaseAuth.instance.currentUser;
-      nouvelleReunion.lead = user!.uid;
+      //final user = FirebaseAuth.instance.currentUser;
+      nouvelleReunion.lead = (await AuthService().idUtilisateurConnecte())!;
 
-      /*print("lead");
+      print("lead");
       print(nouvelleReunion.lead);
       print("titre");
       print(nouvelleReunion.titre);
@@ -172,11 +172,15 @@ class BoutonService {
       print("isCompleted");
       print(nouvelleReunion.isCompleted);
       print("lieu");
-      print(nouvelleReunion.lieu);*/
+      print(nouvelleReunion.lieu);
+      print("heureDebut");
+      print(nouvelleReunion.heureDebut);
+      print("heureFin");
+      print(nouvelleReunion.heureFin);
 
       // Appel au service pour ajouter la réunion
       try {
-        await reunionService.ajouterReunion(nouvelleReunion, context);
+        //await reunionService.ajouterReunion(nouvelleReunion, context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Réunion ajoutée avec succès !')),
         );
@@ -184,11 +188,11 @@ class BoutonService {
         // Récupérer les tokens de notification à partir de la liste des participants
         List<String> notificationTokens = await NotificationService().getNotificationTokens(nouvelleReunion.participants);
         // Envoyer les notifications aux participants
-        NotificationService().sendNotification(
+        /*NotificationService().sendNotification(
           'Nouvelle réunion',
           'Une nouvelle réunion a été ajoutée !',
           notificationTokens, // Utiliser la liste des tokens pour envoyer les notifications
-        );
+        );*/
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

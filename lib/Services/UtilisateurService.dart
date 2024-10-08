@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gwele/Services/AuthService.dart';
 
 import '../Models/Utilisateur.dart';
 
@@ -104,6 +105,59 @@ class UtilisateurService {
     }
 
     return membres;
+  }
+
+
+  Future<QuerySnapshot> listeParticipantPourReunion() async {
+    final currentUserId = await AuthService().idUtilisateurConnecte();
+
+    if (currentUserId == null) {
+      throw Exception("Aucun utilisateur connecté");
+    }
+
+    // Récupérer les informations de l'utilisateur connecté
+    Utilisateur? currentUserInfo = await utilisateurParId(currentUserId);
+
+    if (currentUserInfo == null) {
+      throw Exception("L'utilisateur connecté n'existe pas dans la base de données");
+    }
+
+    //final userData = userDoc.data();
+    final String role = currentUserInfo.role ?? ''; // Le rôle de l'utilisateur (e.g., 'MANAGER', 'LEADER')
+
+    if (role == 'MANAGER') {
+      // Si l'utilisateur est un MANAGER, récupérer les utilisateurs qu'il a ajoutés
+      return await FirebaseFirestore.instance
+          .collection('utilisateurs')
+          .where('userMere', isEqualTo: currentUserId)
+          .get();
+    } else if (role == 'MEMBRE') {
+      // Si l'utilisateur est un LEADER, récupérer l'équipe dont il est leader
+      final QuerySnapshot equipesQuery = await FirebaseFirestore.instance
+          .collection('equipes')
+          .where('idLeader', isEqualTo: currentUserId)
+          .get();
+
+      if (equipesQuery.docs.isEmpty) {
+        throw Exception("Aucune équipe trouvée pour ce leader");
+      }
+
+      // Récupérer l'ID des membres de l'équipe
+      final List<dynamic> membresIds = equipesQuery.docs.first['membres'];
+
+      // Vérifier que la liste n'est pas vide
+      if (membresIds.isEmpty) {
+        throw Exception("L'équipe n'a pas de membres");
+      }
+
+      // Récupérer les documents des utilisateurs dont l'ID est dans la liste des membres
+      return await FirebaseFirestore.instance
+          .collection('utilisateurs')
+          .where(FieldPath.documentId, whereIn: membresIds)
+          .get();
+    } else {
+      throw Exception("Rôle non géré : $role");
+    }
   }
 
 
