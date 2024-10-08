@@ -156,7 +156,7 @@ class BoutonService {
 
       //final user = FirebaseAuth.instance.currentUser;
       nouvelleReunion.lead = (await AuthService().idUtilisateurConnecte())!;
-
+/*
       print("lead");
       print(nouvelleReunion.lead);
       print("titre");
@@ -177,12 +177,18 @@ class BoutonService {
       print(nouvelleReunion.heureDebut);
       print("heureFin");
       print(nouvelleReunion.heureFin);
-
+*/
       // Appel au service pour ajouter la réunion
       try {
-        //await reunionService.ajouterReunion(nouvelleReunion, context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Réunion ajoutée avec succès !')),
+        await reunionService.ajouterReunion(nouvelleReunion, context);
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const MessageModale(
+                title: "Success",
+                content: "Votre réunion a été programmée"
+            );
+          },
         );
 
         // Récupérer les tokens de notification à partir de la liste des participants
@@ -194,9 +200,14 @@ class BoutonService {
           notificationTokens, // Utiliser la liste des tokens pour envoyer les notifications
         );*/
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Erreur lors de l\'ajout de la réunion.')),
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const MessageModale(
+                title: "Erreur",
+                content: "Erreur lors de l'ajout de la réunion. \n Veuillez recommencer"
+            );
+          },
         );
       }
     }
@@ -432,13 +443,19 @@ class BoutonService {
   }
 
   // Bouton pour ajouter un ordre du jour
-  void boutonAjouterOrdreDuJour(BuildContext context) {
+  void boutonAjouterOrdreDuJour(BuildContext context, Function setState,List<String> ordreDuJour) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AjouterOrdreDuJour(
           onOrdreDuJourAjoute: (String id) {
-            // Gérer l'ID retourné ici
+            // Utilisez setState pour mettre à jour la liste des ordres du jour
+            setState(() {
+              // Ajoutez l'ID à la liste ordreDuJour ici
+              ordreDuJour.add(id);
+            });
+
+            // Affiche une notification pour confirmer l'ajout
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Ordre du jour ajouté avec l\'ID : $id')),
             );
@@ -447,5 +464,8 @@ class BoutonService {
       },
     );
   }
+
+
+
 }
 

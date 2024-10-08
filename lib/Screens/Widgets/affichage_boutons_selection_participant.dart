@@ -30,8 +30,11 @@ class AffichageBoutonSelectionParticipant extends StatelessWidget {
           builder: (BuildContext context) {
             return Scaffold(
               appBar: AppBar(
-                title: Text(title),
-                backgroundColor: Colors.blueGrey,
+                title: Text(
+                    title,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                backgroundColor: primaryColor,
               ),
               body: ListView.builder(
                 itemCount: participantsSnapshot.docs.length,

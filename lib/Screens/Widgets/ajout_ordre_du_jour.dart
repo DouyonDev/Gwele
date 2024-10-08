@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/OrdreDuJour.dart';
 import 'package:gwele/Services/OrdreDuJourService.dart'; // Assurez-vous d'importer le service correct
 
@@ -31,12 +32,10 @@ class _AjouterOrdreDuJourState extends State<AjouterOrdreDuJour> {
         statut: _statut,
       );
 
-      // Instancier le service
-      OrdreDuJourService ordreDuJourService = OrdreDuJourService();
 
       try {
         // Ajouter l'ordre du jour dans Firestore
-        await ordreDuJourService.ajouterOrdreDuJour(nouvelOrdre, context);
+        await OrdreDuJourService().ajouterOrdreDuJour(nouvelOrdre, context);
 
         // Appeler le callback pour retourner l'ID
         widget.onOrdreDuJourAjoute(nouvelOrdre.id);
@@ -107,7 +106,13 @@ class _AjouterOrdreDuJourState extends State<AjouterOrdreDuJour> {
         ),
         ElevatedButton(
           onPressed: _submitForm,
-          child: const Text('Ajouter'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+          ),
+          child: const Text(
+              'Ajouter',
+            style: TextStyle(color: thirdColor),
+          ),
         ),
       ],
     );

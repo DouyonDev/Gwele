@@ -10,27 +10,11 @@ class ReunionService {
   //FOnction pour ajouter une réunion
   Future<void> ajouterReunion(Reunion reunion, BuildContext context) async {
     try {
-      /*print("lead");
-      print(reunion.lead);
-      print("titre");
-      print(reunion.titre);
-      print("lieu");
-      print(reunion.lieu);
-      print("description");
-      print(reunion.description);
-      print("dateReunion");
-      print(reunion.dateReunion);
-      print("participants");
-      print(reunion.participants);
-      print("isCompleted");
-      print(reunion.isCompleted);
-      print("lieu");
-      print(reunion.lieu);*/
       // Ajout de la réunion dans la collection Firestore
       DocumentReference docRef = await reunionCollection.add(reunion.toMap());
 
       // Mise à jour de l'objet Reunion avec l'ID généré
-      //reunion.id = docRef.id;
+      reunion.id = docRef.id;
 
       //print('Reunion ajoutée avec succès avec l\'ID: ${reunion.id}');
     } catch (e) {
@@ -122,4 +106,6 @@ class ReunionService {
       throw e;
     }
   }
+
+
 }

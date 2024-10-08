@@ -70,4 +70,28 @@ class OrdreDuJourService {
       throw e;
     }
   }
+
+
+  // Fonction pour récupérer un ordre du jour par ID
+  Future<OrdreDuJour?> getOrdreDuJourById(String id) async {
+    try {
+      // Récupérer le document par ID
+      DocumentSnapshot docSnapshot = await ordreDuJourCollection.doc(id).get();
+
+      if (docSnapshot.exists) {
+        // Extraire les données du document
+        final data = docSnapshot.data() as Map<String, dynamic>;
+
+        // Utiliser la méthode fromMap pour créer l'objet OrdreDuJour
+        return OrdreDuJour.fromMap(data);
+      } else {
+        print('Ordre du jour avec l\'ID $id n\'existe pas.');
+        return null; // Retourne null si le document n'existe pas
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération de l\'ordre du jour: $e');
+      throw e; // Relance l'erreur pour une gestion éventuelle au niveau supérieur
+    }
+  }
+
 }
