@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Screens/Lead/Leader.dart';
 
 import '../Models/Utilisateur.dart';
 import '../Screens/Admin/Admin.dart';
@@ -47,9 +48,28 @@ class AuthService {
             MaterialPageRoute(builder: (context) => Manager()),
           );
         } else if (utilisateur.role == 'MEMBRE') {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => Participant()),
-          );
+
+          // Requête pour vérifier si l'utilisateur est un leader dans une équipe
+          FirebaseFirestore.instance
+              .collection('equipes') // Nom de la collection où sont stockées les équipes
+              .where('leaderId', isEqualTo: utilisateur.id) // Vérifie si l'utilisateur est leader
+              .get()
+              .then((querySnapshot) {
+            if (querySnapshot.docs.isNotEmpty) {
+              // Si l'utilisateur est trouvé comme leader, navigation vers la page Leader
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => Leader()),
+              );
+            } else {
+              // Si l'utilisateur n'est pas un leader, navigation vers la page Participant
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => Participant()),
+              );
+            }
+          }).catchError((error) {
+            print("Erreur lors de la vérification du rôle de leader : $error");
+            // Gérer les erreurs si nécessaire
+          });
         } else {
           showDialog(
             context: context,
