@@ -30,11 +30,11 @@ class _LesOffresState extends State<LesOffres> {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-            title: const Text('Vos offres')
+            title: const Text('Les offres')
         ),
         body: const Center(
             child: Text(
-                'Vous devez être connecté pour voir les offres que vous avez ajoutées',
+                'Vous devez être connecté pour voir les offres.',
                 style: TextStyle(
                   color: thirdColor,
                 ),
@@ -46,7 +46,7 @@ class _LesOffresState extends State<LesOffres> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBarListPage(
-        title: 'Vos offres',
+        title: 'Les offres',
         buttonText: 'Ajouter',
         onButtonPressed: () {
           Navigator.push(
@@ -72,31 +72,26 @@ class _LesOffresState extends State<LesOffres> {
                     onStatusSelected: _updateStatus,
                   ),
                   FilterButton(
-                    label: 'Haute',
-                    status: 'haute',
-                    selectedStatus: selectedStatus,
-                    onStatusSelected: _updateStatus,
-                  ),
-                  FilterButton(
-                    label: 'Moyenne',
-                    status: 'moyenne',
-                    selectedStatus: selectedStatus,
-                    onStatusSelected: _updateStatus,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FilterButton(
-                    label: 'Basse',
-                    status: 'basse',
-                    selectedStatus: selectedStatus,
-                    onStatusSelected: _updateStatus,
-                  ),
-                  FilterButton(
                     label: 'En attente',
                     status: 'En attente',
+                    selectedStatus: selectedStatus,
+                    onStatusSelected: _updateStatus,
+                  ),
+                  FilterButton(
+                    label: 'En cours',
+                    status: 'En cours',
+                    selectedStatus: selectedStatus,
+                    onStatusSelected: _updateStatus,
+                  ),
+                  FilterButton(
+                    label: 'Soumise',
+                    status: 'Soumise',
+                    selectedStatus: selectedStatus,
+                    onStatusSelected: _updateStatus,
+                  ),
+                  FilterButton(
+                    label: 'Expirée',
+                    status: 'Expiree',
                     selectedStatus: selectedStatus,
                     onStatusSelected: _updateStatus,
                   ),
@@ -156,12 +151,10 @@ class _LesOffresState extends State<LesOffres> {
     if (selectedStatus == 'tout') {
       return FirebaseFirestore.instance
           .collection('offres')
-          .where('soumisPar', isEqualTo: user.uid) // Vérifier si l'utilisateur est dans les participants
           .snapshots();
     } else {
       return FirebaseFirestore.instance
           .collection('offres')
-          .where('soumisPar', isEqualTo: user.uid) // Vérifier si l'utilisateur est dans les participants
           .where('statut', isEqualTo: selectedStatus) // Filtrer par statut
           .snapshots();
     }

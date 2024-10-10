@@ -224,35 +224,11 @@ class BoutonService {
       });
     }
 
-    /*if (nomFichier.isNotEmpty && nomFichier != 'Aucun fichier selectionné') {
-      // Si un fichier a bien été sélectionné et uploadé
-      documents.add(nomFichier); // Ajouter le nom du fichier à la liste
+    Future<File?> selectionnerFichier() async {
 
-      // Mise à jour de l'interface
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Fichier $nomFichier uploadé avec succès'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      return documents;
-    } else if (nomFichier == 'Aucun fichier selectionné') {
-      // Si aucun fichier n'a été sélectionné
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Aucun fichier sélectionné'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return documents;
-    } else {
-      // En cas d'erreur
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erreur: $nomFichier'),
-          backgroundColor: Colors.red,
-        ),
-      );*/
+      File? fichier = await FichiersService().selectionnerFichier();
+      return fichier;
+    }
       return documents;
     }
 

@@ -22,9 +22,9 @@ class ManagerState extends State<Manager> {
     LesReunions(),
     LesTaches(),
     MesEquipes(),
-    Profil(),
     LesOffres(),
     MesComptables(),
+    Profil(),
   ];
 
   // Méthode pour changer de page à partir de la barre de navigation
@@ -45,10 +45,10 @@ class ManagerState extends State<Manager> {
     return Scaffold(
       appBar: !isDesktop
           ? AppBar( // Ajouter une AppBar sur mobile avec un bouton pour ouvrir le drawer
-        title: Text('Manager'),
+        title: const Text('Manager'),
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
             onPressed: () {
               Scaffold.of(context).openDrawer(); // Ouvre le drawer sur mobile
             },

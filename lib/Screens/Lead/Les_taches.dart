@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Screens/Participant/ajout_tache.dart';
 import 'package:gwele/Screens/Widgets/affichage_tache.dart';
+import 'package:stream_transform/stream_transform.dart'; // Importer le package
 
 import '../../Colors.dart';
 import '../../Models/Tache.dart';
@@ -30,7 +31,7 @@ class _LesTachesState extends State<LesTaches> {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-            title: const Text('Vos tâches')
+            title: const Text('Les tâches')
         ),
         body: const Center(
             child: Text(
@@ -46,7 +47,7 @@ class _LesTachesState extends State<LesTaches> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBarListPage(
-        title: 'Vos tâches',
+        title: 'Les tâches',
         buttonText: 'Ajouter',
         onButtonPressed: () {
           Navigator.push(
@@ -83,26 +84,9 @@ class _LesTachesState extends State<LesTaches> {
                     selectedStatus: selectedStatus,
                     onStatusSelected: _updateStatus,
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
                   FilterButton(
                     label: 'Basse',
                     status: 'basse',
-                    selectedStatus: selectedStatus,
-                    onStatusSelected: _updateStatus,
-                  ),
-                  FilterButton(
-                    label: 'En attente',
-                    status: 'En attente',
-                    selectedStatus: selectedStatus,
-                    onStatusSelected: _updateStatus,
-                  ),
-                  FilterButton(
-                    label: 'En cours',
-                    status: 'En cours',
                     selectedStatus: selectedStatus,
                     onStatusSelected: _updateStatus,
                   ),
@@ -112,7 +96,7 @@ class _LesTachesState extends State<LesTaches> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: getTacheStream(user),
+              stream: getTacheManager(user, selectedStatus),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator(color: primaryColor,));
@@ -158,20 +142,42 @@ class _LesTachesState extends State<LesTaches> {
   }
 
   // 4. Fonction pour obtenir les taches en fonction du statut sélectionné
-  Stream<QuerySnapshot> getTacheStream(User user) {
+  Stream<QuerySnapshot> getTacheManager(User user, String selectedStatus) {
+    // Filtrer les tâches assignées à l'utilisateur selon le statut
+    Stream<QuerySnapshot> tachesAssigneesA;
+    Stream<QuerySnapshot> tachesAssigneesPar;
+
     if (selectedStatus == 'tout') {
-      return FirebaseFirestore.instance
+      tachesAssigneesA = FirebaseFirestore.instance
           .collection('taches')
-          .where('assigneA', isEqualTo: user.uid) // Vérifier si l'utilisateur est dans les participants
+          .where('assigneA', isEqualTo: user.uid)
+          .snapshots();
+
+      tachesAssigneesPar = FirebaseFirestore.instance
+          .collection('taches')
+          .where('assignePar', isEqualTo: user.uid)
           .snapshots();
     } else {
-      return FirebaseFirestore.instance
+      tachesAssigneesA = FirebaseFirestore.instance
           .collection('taches')
-          .where('assigneA', isEqualTo: user.uid) // Vérifier si l'utilisateur est dans les participants
-          .where('statut', isEqualTo: selectedStatus) // Filtrer par statut
+          .where('assigneA', isEqualTo: user.uid)
+          .where('priorite', isEqualTo: selectedStatus)
+          .snapshots();
+
+      tachesAssigneesPar = FirebaseFirestore.instance
+          .collection('taches')
+          .where('assignePar', isEqualTo: user.uid)
+          .where('priorite', isEqualTo: selectedStatus)
           .snapshots();
     }
+
+    // Utiliser `merge` pour combiner les deux flux
+    return tachesAssigneesA.merge(tachesAssigneesPar);
   }
+
+
+
+
 
 
 }

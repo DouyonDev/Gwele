@@ -13,6 +13,7 @@ class Reunion {
   String lieu;
   bool isCompleted;
   String lead;
+  String rapporteur;
   List<String> ordreDuJour;
   List<String> tachesAssignees;
   List<String> documents;
@@ -29,6 +30,7 @@ class Reunion {
     required this.lieu,
     required this.isCompleted,
     required this.lead,
+    required this.rapporteur,
     required this.ordreDuJour,
     required this.tachesAssignees,
     required this.documents,
@@ -54,6 +56,7 @@ class Reunion {
       lieu: doc['lieu'] ?? '',
       isCompleted: doc['isCompleted'] ?? false,
       lead: doc['lead'] ?? '',
+      rapporteur: doc['rapporteur'] ?? '',
       ordreDuJour: List<String>.from(doc['ordreDuJour'] ?? []),
       tachesAssignees: List<String>.from(doc['tachesAssignees'] ?? []),
       documents: List<String>.from(doc['documents'] ?? []),
@@ -73,6 +76,7 @@ class Reunion {
       'lieu': lieu,
       'isCompleted': isCompleted,
       'lead': lead,
+      'rapporteur': rapporteur,
       'ordreDuJour': ordreDuJour,
       'tachesAssignees': tachesAssignees,
       'documents': documents,

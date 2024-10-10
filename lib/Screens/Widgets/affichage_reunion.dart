@@ -18,7 +18,7 @@ class AffichageReunion extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailReunionPage(reunionInfo: reunionData),
+            builder: (context) => DetailReunion(reunionInfo: reunionData),
           ),
         );
       },

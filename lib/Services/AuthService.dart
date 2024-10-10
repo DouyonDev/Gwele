@@ -165,4 +165,12 @@ class AuthService {
     return null; // Si l'utilisateur n'est pas connecté
   }
 
+  String? idUtilisateurConnect() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user.uid; // Retourne l'ID de l'utilisateur connecté
+    }
+    return null; // Si l'utilisateur n'est pas connecté
+  }
+
 }

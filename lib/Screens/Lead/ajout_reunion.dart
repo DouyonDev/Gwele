@@ -252,6 +252,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
                             lieu: _lieu,
                             isCompleted: false,
                             lead: '',
+                            rapporteur: '',
                             ordreDuJour: _ordreDuJour,
                             tachesAssignees: _tachesAssignees,
                             documents: documents,
