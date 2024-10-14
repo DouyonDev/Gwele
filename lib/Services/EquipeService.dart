@@ -6,6 +6,7 @@ class EquipeService {
   FirebaseFirestore.instance.collection('equipes');
 
   // Ajouter une nouvelle équipe avec un ID généré automatiquement par Firestore
+
   Future<void> ajouterEquipe(Equipe equipe) async {
     try {
       // Créer un document avec un ID automatique

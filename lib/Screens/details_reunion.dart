@@ -4,16 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
+import 'package:gwele/Models/Tache.dart';
 import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Screens/Lead/ModifierReunion.dart';
 import 'package:gwele/Screens/Widgets/message_modale.dart';
 import 'package:gwele/Services/AuthService.dart';
 import 'package:gwele/Services/FichiersService.dart';
+import 'package:gwele/Services/TacheService.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
 import 'package:gwele/Services/UtilsService.dart';
 
 import '../Services/BoutonService.dart';
 import '../Services/ReunionService.dart';
+import 'Lead/ajout_tache_reunion.dart';
 import 'Widgets/affichage_boutons_selection_participant.dart';
 
 class DetailReunion extends StatefulWidget {
@@ -86,6 +89,10 @@ class DetailReunionState extends State<DetailReunion> {
                     const SizedBox(height: 20),
                     // Quatrième Bloc: Liste des documents
                     blocStyle(_buildDocumentsBlock()),
+                    const SizedBox(height: 20),
+                    // Quatrième Bloc: Liste des documents
+                    if(widget.reunionInfo.statut == "En cours")
+                      blocStyle(_buildTachesBlock()),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -282,6 +289,55 @@ class DetailReunionState extends State<DetailReunion> {
     );
   }
 
+  Widget _buildTachesBlock() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Les tâches :',
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+
+        // Vérifie si la liste des participants n'est pas vide
+        if (widget.reunionInfo.tachesAssignees.isNotEmpty)
+          ...widget.reunionInfo.tachesAssignees.map((tacheId) {
+            // Retourner un FutureBuilder pour chaque participant
+            return FutureBuilder<Tache?>(
+              future: TacheService().tacheParId(tacheId), // Cherche les informations du participant à partir de son id
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Affichez un indicateur de chargement pendant la récupération des données
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  // Gérer les erreurs si la récupération échoue
+                  return const Text('Erreur de chargement');
+                } else if (snapshot.hasData && snapshot.data != null) {
+                  // Si les données sont disponibles, afficher le ListTile
+                  Tache infoTache = snapshot.data!;
+                  return ListTile(
+                    leading: const Icon(Icons.person, color: secondaryColor),
+                    title: Text(
+                      '${infoTache.titre} ${infoTache.statut}', // Afficher prénom et nom
+                      style: const TextStyle(fontSize: 16.0),
+                    ),
+                    trailing: const Icon(Icons.person_outline, color: Colors.blueGrey),
+                  );
+                } else {
+                  return const Text('Tache non trouvé');
+                }
+              },
+            );
+          }).toList()
+        else
+          const Text('Aucune tâche'),
+      ],
+    );
+  }
+
   // Quatrième Bloc: Liste des documents
   Widget _buildBottomBlock() {
     String? userId = AuthService().idUtilisateurConnect();
@@ -438,35 +494,63 @@ class DetailReunionState extends State<DetailReunion> {
                     builder: (BuildContext context) {
                       return MessageModale(
                         title: widget.reunionInfo.titre,
-                        content: "La réunion a démarée.",
+                        content: "La réunion est terminée.",
                       );
                     },
                   );
                 },
               ),
             ),
-          Tooltip(
-            message: "Supprimer la réunion",
-            child: IconButton(
-              icon: const Icon(
-                  Icons.delete_outline_rounded, color: Colors.blue),
-              onPressed: () {
-                widget.reunionInfo.statut = "En cours";
-                ReunionService().supprimerReunion(widget.reunionInfo.id);
-                setState(() {});
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return MessageModale(
-                      title: widget.reunionInfo.titre,
-                      content: "La reunion a été définitivement supprimée.",
-                    );
-                  },
+          if (widget.reunionInfo.statut == "En attente")
+            Tooltip(
+              message: "Supprimer la réunion",
+              child: IconButton(
+                icon: const Icon(
+                    Icons.delete_outline_rounded, color: Colors.blue),
+                onPressed: () {
+                  widget.reunionInfo.statut = "En cours";
+                  ReunionService().supprimerReunion(widget.reunionInfo.id);
+                  setState(() {});
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return MessageModale(
+                        title: widget.reunionInfo.titre,
+                        content: "La reunion a été définitivement supprimée.",
+                      );
+                    },
 
-                );
-              },
+                  );
+                },
+              ),
             ),
-          )
+            Tooltip(
+              message: "Assigner une tâche",
+              child: IconButton(
+                icon: const Icon(
+                    Icons.add_task_rounded, color: Colors.blue),
+                onPressed: () {
+                  Navigator.push(
+                    context, MaterialPageRoute(
+                    builder: (context) =>
+                        AjoutTacheReunion(reunion: widget.reunionInfo,),
+                  ),
+                  );
+
+                },
+              ),
+            ),
+            if(widget.reunionInfo.statut == "Terminer")
+              Tooltip(
+                message: "Générer un rapport",
+                child: IconButton(
+                  icon: const Icon(
+                      Icons.receipt, color: Colors.blue),
+                  onPressed: () {
+
+                  },
+                ),
+            )
           ]
           )
 

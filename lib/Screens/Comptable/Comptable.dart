@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:gwele/Screens/Lead/Les_offres.dart';
-import 'package:gwele/Screens/Lead/Les_taches.dart';
-import 'package:gwele/Screens/Lead/les_reunions.dart';
-import 'package:gwele/Screens/Manager/mes_comptables.dart';
-import 'package:gwele/Screens/Manager/mes_equipes.dart';
-import 'package:gwele/Screens/Manager/side_menu_manager_widget.dart';
+import 'package:gwele/Screens/Comptable/side_menu_comptable_widget.dart';
+import '../Participant/mes_Offres.dart';
+import '../Participant/mes_reunions.dart';
+import '../Participant/mes_taches.dart';
 import '../dashbord/util/responsive.dart';
 import '../dashbord/widgets/side_menu_widget.dart';
 import '../dashbord/widgets/summary_widget.dart';
 import '../profil.dart';
+import 'Les_clients.dart';
 
-class Manager extends StatefulWidget {
+class Comptable extends StatefulWidget {
+
   @override
-  ManagerState createState() => ManagerState();
+  ComptableState createState() => ComptableState();
 }
 
-class ManagerState extends State<Manager> {
+class ComptableState extends State<Comptable> {
   int _selectedIndex = 0; // Index pour suivre l'élément sélectionné
 
   // Liste des widgets pour chaque page
   final List<Widget> _pages = <Widget>[
-    LesReunions(),
-    LesTaches(),
-    MesEquipes(),
-    LesOffres(),
-    MesComptables(),
+    MesReunions(),
+    MesTaches(),
+    LesClients(),
+    MesOffres(),
     Profil(),
   ];
 
@@ -46,7 +45,7 @@ class ManagerState extends State<Manager> {
     return Scaffold(
       appBar: !isDesktop
           ? AppBar( // Ajouter une AppBar sur mobile avec un bouton pour ouvrir le drawer
-        title: const Text('Manager'),
+        title: const Text('Comptable'),
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu),
@@ -60,7 +59,7 @@ class ManagerState extends State<Manager> {
       drawer: !isDesktop
           ? SizedBox(
         width: 250,
-        child: SideMenuManagerWidget(onItemSelected: _onItemTapped),
+        child: SideMenuComptableWidget(onItemSelected: _onItemTapped),
       )
           : null,
       endDrawer: Responsive.isMobile(context)
@@ -76,7 +75,7 @@ class ManagerState extends State<Manager> {
               Expanded(
                 flex: 2,
                 child: SizedBox(
-                  child: SideMenuManagerWidget(onItemSelected: _onItemTapped),
+                  child: SideMenuComptableWidget(onItemSelected: _onItemTapped),
                 ),
               ),
             Expanded(
@@ -98,7 +97,7 @@ class ManagerState extends State<Manager> {
 /*Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manager Dashboard'),
+        title: const Text('Comptable Dashboard'),
         backgroundColor: primaryColor,
       ),
       extendBody: true,

@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:gwele/Screens/Widgets/ajout_ordre_du_jour.dart';
 import 'package:gwele/Screens/Widgets/message_modale_erreur.dart';
+import 'package:gwele/Services/ClientService.dart';
 import 'package:gwele/Services/NotificationService.dart';
 
+import '../Models/Client.dart';
 import '../Models/Equipe.dart';
 import '../Models/Reunion.dart';
 import '../Models/Utilisateur.dart';
@@ -146,6 +148,37 @@ class BoutonService {
     }
   }
 
+  //Bouton pour enregistrer un manager
+  Future<void> BtnAjouterClient(GlobalKey<FormState> formKey,
+      BuildContext context, Client client) async {
+    final isValid = formKey.currentState?.validate();
+    if (isValid != null && isValid) {
+      formKey.currentState?.save();
+      try {
+        // Récupérer l'ID du formateur connecté
+        final adminId = FirebaseAuth.instance.currentUser?.uid;
+
+        ClientService().ajouterClient(client);
+
+        // Afficher un message de succès
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Client ajouté avec succès')),
+        );
+
+        // Réinitialiser le formulaire après l'enregistrement
+        formKey.currentState?.reset();
+      } on FirebaseAuthException catch (e) {
+        // Gestion des erreurs d'authentification
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur : ${e.message}')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur : $e')),
+        );
+      }
+    }
+  }
   //Bouton pour ajouter une réunion
   Future<void> btnAjouterReunion(
       GlobalKey<FormState> formKey,
@@ -397,6 +430,53 @@ class BoutonService {
         manager.id = userCredential.user!.uid;
         // Enregistrement des informations du manager dans Firestore
         UtilisateurService().ajouterUtilisateur(manager);
+
+        // Afficher un message de succès
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Utilisateur ajouté avec succès')),
+        );
+
+        // Réinitialiser le formulaire après l'enregistrement
+        formKey.currentState?.reset();
+      } on FirebaseAuthException catch (e) {
+        // Gestion des erreurs d'authentification
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur : ${e.message}')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur : $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> boutonAjouterMembre(GlobalKey<FormState> formKey,
+      BuildContext context, Utilisateur membre, Equipe equipe) async {
+    final isValid = formKey.currentState?.validate();
+    if (isValid != null && isValid) {
+      formKey.currentState?.save();
+      try {
+        // Récupérer l'ID de l'utilisateur connecté
+        String? adminId = FirebaseAuth.instance.currentUser?.uid;
+        String? tokenMessaging = await FirebaseMessaging.instance.getToken();
+        membre.userMere = adminId.toString();
+        membre.notificationToken = tokenMessaging.toString();
+
+
+        // Création de l'utilisateur manager dans Firebase Authentication avec un mot de passe par défaut
+        UserCredential userCredential =
+        await auth.createUserWithEmailAndPassword(
+          email: membre.email,
+          password: '12345678', // Mot de passe par défaut
+        );
+
+        equipe.membres.add(userCredential.user!.uid);
+        EquipeService().mettreAJourEquipe(equipe);
+
+        membre.id = userCredential.user!.uid;
+        // Enregistrement des informations du manager dans Firestore
+        UtilisateurService().ajouterUtilisateur(membre);
 
         // Afficher un message de succès
         ScaffoldMessenger.of(context).showSnackBar(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Equipe.dart';
 import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Screens/Manager/ajout_Membre.dart';
 import 'package:gwele/Services/EquipeService.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
 
@@ -212,13 +213,21 @@ class _DetailEquipeState extends State<DetailEquipe> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            AffichageBoutonSelectionParticipant(
+            ElevatedButton(onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AjoutMembre(equipe: widget.equipeInfo)
+                  )
+              );
+            }, child: Text("Ajouter"))
+            /*AffichageBoutonSelectionParticipant(
               title: 'Choisissez l\'adjoint du groupe',
               buttonText: 'Ajouter',
               onParticipantSelected: onParticipantSelected,
               setState: () => setState(() {}), // Appel à setState dans le parent
               fetchParticipants: fetchParticipants,
-            ),
+            ),*/
           ],
         ),
         const SizedBox(height: 10),

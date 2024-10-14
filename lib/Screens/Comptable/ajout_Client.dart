@@ -1,29 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gwele/Models/Equipe.dart';
 
 import '../../Colors.dart';
-import '../../Models/Utilisateur.dart';
+import '../../Models/Client.dart';
 import '../../Services/BoutonService.dart';
 
-class AjoutMembre extends StatefulWidget {
-
-  Equipe equipe;
+class AjoutClient extends StatefulWidget {
   @override
-  AjoutMembreState createState() => AjoutMembreState();
-
-  AjoutMembre({Key? key, required this.equipe}) : super(key: key);
+  AjoutClientState createState() => AjoutClientState();
 }
 
-class AjoutMembreState extends State<AjoutMembre> {
+class AjoutClientState extends State<AjoutClient> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _prenom = '';
   String _nom = '';
   String _email = '';
+  String _adresse = '';
+  String _telephone = '';
 
   final FirebaseAuth auth = FirebaseAuth.instance;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +35,7 @@ class AjoutMembreState extends State<AjoutMembre> {
               ),
               const SizedBox(height: 30),
               const Text(
-                "Ajout d'un membre d'équipe",
+                "Ajout d'un client",
                 style: TextStyle(
                   fontSize: 24,
                   color: primaryColor,
@@ -104,22 +99,61 @@ class AjoutMembreState extends State<AjoutMembre> {
                         _email = value!;
                       },
                     ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      key: const ValueKey('adresse'),
+                      decoration: const InputDecoration(
+                        labelText: 'Adresse',
+                        labelStyle: TextStyle(color: Color(0xffA6A6A6)),
+                        prefixIcon: Icon(Icons.home),
+                      ),
+                      style: const TextStyle(
+                        color: secondaryColor,
+                        fontSize: 16,
+                      ),
+                      onSaved: (value) {
+                        _adresse = value!;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      key: const ValueKey('telephone'),
+                      decoration: const InputDecoration(
+                        labelText: 'Téléphone',
+                        labelStyle: TextStyle(color: Color(0xffA6A6A6)),
+                        prefixIcon: Icon(Icons.phone),
+                      ),
+                      keyboardType: TextInputType.phone,
+                      style: const TextStyle(
+                        color: secondaryColor,
+                        fontSize: 16,
+                      ),
+                      onSaved: (value) {
+                        _telephone = value!;
+                      },
+                    ),
                     const SizedBox(height: 50),
                     ElevatedButton(
                       onPressed: () {
-                        Utilisateur membre = Utilisateur(
-                          id: '',
-                          nom: _nom,
-                          prenom: _prenom,
-                          role: 'MEMBRE',
-                          email: _email,
-                          imageUrl: '',
-                          userMere: '',
-                          notificationToken: '',
-                          tachesAssignees: [],
-                          reunions: [], // L'ID sera généré automatiquement par Firestore
-                        );
-                        BoutonService().boutonAjouterMembre(_formKey,context,membre,widget.equipe);
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+
+                          Client client = Client(
+                            id: '',
+                            prenom: _prenom,
+                            nom: _nom,
+                            email: _email,
+                            adresse: _adresse,
+                            telephone: _telephone,
+                            idFactures: [],
+                          );
+
+                          BoutonService().BtnAjouterClient(
+                            _formKey,
+                            context,
+                            client,
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(

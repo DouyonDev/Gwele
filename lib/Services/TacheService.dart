@@ -18,6 +18,23 @@ class TacheService {
     }
   }
 
+  //Fonction pour ajouter une tache et recupérer l'id de la tâche
+  Future<String> ajouterTacheID(Tache tache) async {
+    try {
+      tache.assignePar = FirebaseAuth.instance.currentUser!.uid;
+
+      // Ajouter la tâche et récupérer la référence du document
+      DocumentReference docRef = await tacheCollection.add(tache.toMap());
+
+      // Retourner l'ID du document ajouté
+      return docRef.id;
+    } catch (e) {
+      print('Erreur lors de l\'ajout de la tâche: $e');
+      throw e; // Propager l'erreur pour la gestion à un niveau supérieur
+    }
+  }
+
+
   // Récupérer une liste de tâches
   Stream<List<Tache>> listeTaches() {
     try {
@@ -58,6 +75,22 @@ class TacheService {
     } catch (e) {
       print('Erreur lors de la mise à jour de la tâche: $e');
       throw e;
+    }
+  }
+
+  Future<Tache?> tacheParId(String id) async {
+    try {
+      DocumentSnapshot doc = await tacheCollection.doc(id).get();
+      if (doc.exists) {
+        // Utilisation de la méthode fromDocument en passant le document et l'ID
+        return Tache.fromDocument(doc.data() as Map<String, dynamic>, doc.id);
+      } else {
+        print('Utilisateur non trouvé pour l\'ID: $id');
+        return null; // Retourne null si l'utilisateur n'existe pas
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération de l\'utilisateur: $e');
+      throw e; // Propager l'erreur pour la gestion à un niveau supérieur
     }
   }
 

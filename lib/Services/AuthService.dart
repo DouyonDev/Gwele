@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Screens/Comptable/Comptable.dart';
 import 'package:gwele/Screens/Lead/Leader.dart';
 
 import '../Models/Utilisateur.dart';
@@ -46,6 +47,10 @@ class AuthService {
         } else if (utilisateur.role == 'MANAGER') {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => Manager()),
+          );
+        } else if (utilisateur.role == 'COMPTABLE') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => Comptable()),
           );
         } else if (utilisateur.role == 'MEMBRE') {
 
