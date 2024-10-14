@@ -1,18 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../Models/Facture.dart';
+import 'package:gwele/Models/Client.dart';
+import 'package:gwele/Models/Facture.dart';
+import 'package:gwele/Services/ClientService.dart';
 
 class FactureService {
   final CollectionReference facturesCollection =
   FirebaseFirestore.instance.collection('factures');
 
   // Ajouter une nouvelle facture avec un numéro saisi par l'utilisateur
-  Future<void> ajouterFacture(Facture facture) async {
+  Future<void> ajouterFacture(Facture facture, Client client ) async {
     try {
       // Ajouter la facture avec les informations fournies par l'utilisateur
       DocumentReference docRef = await facturesCollection.add(facture.toMap());
 
       // Mise à jour de l'objet Facture avec l'ID généré
       facture.id = docRef.id;
+      client.idFactures.add(facture.id);
+      await ClientService().mettreAJourClient(client);
 
       print('Facture ajoutée avec succès avec l\'ID: ${facture.id}');
     } catch (e) {

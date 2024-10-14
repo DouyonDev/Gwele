@@ -34,7 +34,7 @@ Client {
   // Créer un Client à partir d'une Map
   factory Client.fromMap(Map<String, dynamic> map, String id) {
     return Client(
-      id: map['id'] ?? '',
+      id: id,
       prenom: map['prenom'] ?? '',
       nom: map['nom'] ?? '',
       email: map['email'] ?? '',

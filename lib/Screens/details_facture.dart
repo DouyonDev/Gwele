@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
-import 'package:gwele/Models/Client.dart';
 import 'package:gwele/Models/Facture.dart';
-import 'package:gwele/Screens/Comptable/ajout_facture.dart';
-import 'package:gwele/Screens/Widgets/affichage_facture.dart';
-import 'package:gwele/Services/FactureService.dart';
+import 'package:gwele/Models/Paiement.dart';
+import 'package:gwele/Screens/Comptable/ajout_paiement.dart';
+import 'package:gwele/Services/PaiementService.dart';
 
-class DetailClient extends StatefulWidget {
-  final Client clientInfo;
+class DetailFacture extends StatefulWidget {
+  final Facture factureInfo;
 
-  const DetailClient({Key? key, required this.clientInfo}) : super(key: key);
+  const DetailFacture({Key? key, required this.factureInfo}) : super(key: key);
 
   @override
-  _DetailClientState createState() => _DetailClientState();
+  _DetailFactureState createState() => _DetailFactureState();
 }
 
-class _DetailClientState extends State<DetailClient> {
+class _DetailFactureState extends State<DetailFacture> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +22,7 @@ class _DetailClientState extends State<DetailClient> {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         title: const Text(
-          'Les informations du client',
+          'Les informations sur la facture',
           style: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,
@@ -43,7 +42,7 @@ class _DetailClientState extends State<DetailClient> {
                     blocStyle(_buildFirstBlock()),
                     const SizedBox(height: 20),
                     // Deuxième Bloc: Liste des ordres du jour
-                    blocStyle(_buildFactureBlock(context)),
+                    blocStyle(_buildPaiementBlock(context)),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -61,7 +60,7 @@ class _DetailClientState extends State<DetailClient> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${widget.clientInfo.prenom} ${widget.clientInfo.nom}',
+          '${widget.factureInfo.numeroFacture}',
           style: const TextStyle(
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -73,7 +72,7 @@ class _DetailClientState extends State<DetailClient> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Téléphone : ${widget.clientInfo.telephone}',
+              'Payé : ${widget.factureInfo.estPaye}',
               style: const TextStyle(
                 fontSize: 12.0,
                 color: Colors.grey,
@@ -82,7 +81,7 @@ class _DetailClientState extends State<DetailClient> {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Adresse : ${widget.clientInfo.adresse ?? 'non renseigné'}',
+              'Montant : ${widget.factureInfo.montant ?? 'non renseigné'}',
               style: const TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
@@ -96,7 +95,7 @@ class _DetailClientState extends State<DetailClient> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Email : ${widget.clientInfo.email ?? 'Non spécifiée'}',
+              'Date écheance : ${widget.factureInfo.dateEcheance ?? 'Non spécifiée'}',
               style: const TextStyle(
                 fontSize: 12.0,
                 color: secondaryColor,
@@ -110,7 +109,7 @@ class _DetailClientState extends State<DetailClient> {
   }
 
   // Deuxième Bloc: Liste des factures
-  Widget _buildFactureBlock(BuildContext context) {
+  Widget _buildPaiementBlock(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -118,7 +117,7 @@ class _DetailClientState extends State<DetailClient> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Les factures :',
+              'Les paiements :',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -129,21 +128,21 @@ class _DetailClientState extends State<DetailClient> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AjoutFacture(client: widget.clientInfo),
+                    builder: (context) => AjoutPaiement(facture: widget.factureInfo),
                   ),
                 ).then((_) {
                   setState(() {}); // Actualisez l'état après le retour
                 });
               },
-              child: const Text("Ajouter une facture"),
+              child: const Text("Ajouter un paiement"),
             )
           ],
         ),
         const SizedBox(height: 10),
         Column(
-          children: widget.clientInfo.idFactures.map((participantID) {
-            return FutureBuilder<Facture?>(
-              future: FactureService().factureParId(participantID),
+          children: widget.factureInfo.idPaiements.map((paiementID) {
+            return FutureBuilder<Paiement?>(
+              future: PaiementService().paiementParId(paiementID),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const ListTile(
@@ -153,16 +152,25 @@ class _DetailClientState extends State<DetailClient> {
                 } else if (snapshot.hasError) {
                   return const ListTile(
                     leading: Icon(Icons.error),
-                    title: Text('Erreur lors du chargement de la facture'),
+                    title: Text('Erreur lors du chargement du paiement'),
                   );
                 } else if (!snapshot.hasData || snapshot.data == null) {
                   return const ListTile(
                     leading: Icon(Icons.money),
-                    title: Text('Pas de facture'),
+                    title: Text('Pas de pas de paiement'),
                   );
                 } else {
-                  Facture? facture = snapshot.data;
-                  return AffichageFacture(factureData: facture!);
+                  Paiement? paiement = snapshot.data;
+                  return ListTile(
+                    leading: const Icon(Icons.money),
+                    title: Text(paiement?.montant.toString() ?? '0'+ ' FCFA'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.remove_circle_outline),
+                      onPressed: () {
+                        // Logique pour supprimer la facture
+                      },
+                    ),
+                  );
                 }
               },
             );

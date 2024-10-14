@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gwele/Screens/Lead/Les_offres.dart';
 import 'package:gwele/Screens/Lead/Les_taches.dart';
 import 'package:gwele/Screens/Lead/les_reunions.dart';
+import 'package:gwele/Screens/Manager/les_reunions_manager.dart';
 import 'package:gwele/Screens/Manager/mes_comptables.dart';
 import 'package:gwele/Screens/Manager/mes_equipes.dart';
 import 'package:gwele/Screens/Manager/side_menu_manager_widget.dart';
@@ -19,7 +20,7 @@ class ManagerState extends State<Manager> {
 
   // Liste des widgets pour chaque page
   final List<Widget> _pages = <Widget>[
-    LesReunions(),
+    LesReunionsManager(),
     LesTaches(),
     MesEquipes(),
     LesOffres(),

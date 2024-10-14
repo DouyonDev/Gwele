@@ -200,8 +200,8 @@ class AjoutEquipeState extends State<AjoutEquipe> {
                             managerId: '',
                             membres: [],
                             dateCreation: DateTime.now(),
+                            reunions: [],
                           );
-                          //print(nouvelleEquipe.nom);
                           print(nouvelleEquipe.leaderId);
                           print(nouvelleEquipe.secondId);
                           BoutonService().boutonAjoutEquipe(_formKey, context, nouvelleEquipe);

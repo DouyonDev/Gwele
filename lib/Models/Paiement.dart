@@ -1,3 +1,5 @@
+import 'package:gwele/Services/UtilsService.dart';
+
 class Paiement {
   String id;
   double montant;
@@ -18,16 +20,16 @@ class Paiement {
     return {
       'id': id,
       'montant': montant,
-      'datePaiement': datePaiement.toIso8601String(),
+      'datePaiement': UtilsService().formatDate(datePaiement),
       'modePaiement': modePaiement,
       'idFacture': idFacture,
     };
   }
 
   // Créer un Paiement à partir d'une Map
-  factory Paiement.fromMap(Map<String, dynamic> map) {
+  factory Paiement.fromMap(Map<String, dynamic> map, String id) {
     return Paiement(
-      id: map['id'] ?? '',
+      id: id,
       montant: map['montant']?.toDouble() ?? 0.0,
       datePaiement: DateTime.parse(map['datePaiement'] ?? DateTime.now().toIso8601String()),
       modePaiement: map['modePaiement'] ?? '',

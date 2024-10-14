@@ -11,12 +11,12 @@ import 'package:gwele/Screens/Widgets/boutons_filtre.dart';
 
 
 
-class LesReunionsLeader extends StatefulWidget {
+class LesReunionsManager extends StatefulWidget {
   @override
-  _LesReunionsLeaderState createState() => _LesReunionsLeaderState();
+  _LesReunionsManagerState createState() => _LesReunionsManagerState();
 }
 
-class _LesReunionsLeaderState extends State<LesReunionsLeader> {
+class _LesReunionsManagerState extends State<LesReunionsManager> {
   String selectedStatus = 'En attente'; // Par défaut, on affiche tous les tickets
 
   void _updateStatus(String status) {

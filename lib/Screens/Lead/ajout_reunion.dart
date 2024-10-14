@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'package:gwele/Models/OrdreDuJour.dart';
-import 'package:gwele/Screens/Widgets/affichage_ordre_du_jour.dart';
+import 'package:gwele/Colors.dart';
+import 'package:gwele/Models/Reunion.dart';
 import 'package:gwele/Screens/Widgets/message_modale.dart';
+import 'package:gwele/Services/AuthService.dart';
+import 'package:gwele/Services/BoutonService.dart';
 import 'package:gwele/Services/FichiersService.dart';
-import 'package:gwele/Services/OrdreDuJourService.dart';
 import 'package:gwele/Services/UtilsService.dart';
 import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,10 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Screens/Widgets/affichage_boutons_selection_participant.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
-import '../../Colors.dart';
-import '../../Models/Reunion.dart';
-import '../../Services/AuthService.dart';
-import '../../Services/BoutonService.dart';
 
 class AjoutReunion extends StatefulWidget {
   @override
@@ -57,7 +54,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
     } else if (role == 'MEMBRE') {
       final QuerySnapshot equipesQuery = await FirebaseFirestore.instance
           .collection('equipes')
-          .where('idLeader', isEqualTo: currentUserId)
+          .where('leaderId', isEqualTo: currentUserId)
           .get();
 
       if (equipesQuery.docs.isEmpty) {

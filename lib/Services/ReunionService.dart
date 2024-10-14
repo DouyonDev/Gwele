@@ -109,5 +109,52 @@ class ReunionService {
     }
   }
 
+  Future<QuerySnapshot> LesParticipantsReunion(String reunionId) async {
+    // Récupérer le document de la réunion par son ID
+    DocumentSnapshot reunionDoc = await FirebaseFirestore.instance
+        .collection('reunions')
+        .doc(reunionId)
+        .get();
+
+    if (!reunionDoc.exists) {
+      throw Exception("La réunion n'existe pas.");
+    }
+
+    // Récupérer la liste des IDs des participants (assumée comme un champ 'participants')
+    List<dynamic> participantIds = reunionDoc['participants'] ?? [];
+
+    if (participantIds.isEmpty) {
+      throw Exception("Aucun participant trouvé.");
+    }
+
+    // Récupérer les utilisateurs en fonction de leurs IDs
+    return await FirebaseFirestore.instance
+        .collection('utilisateurs')
+        .where(FieldPath.documentId, whereIn: participantIds)
+        .get();
+  }
+
+  // Récupérer la liste des ordres du jour pour une réunion donnée
+  Future<List<String>> obtenirOrdresDuJour(String reunionId) async {
+    try {
+      // Récupérer le document de la réunion par son ID
+      DocumentSnapshot reunionDoc = await reunionCollection.doc(reunionId).get();
+
+      if (!reunionDoc.exists) {
+        throw Exception("La réunion n'existe pas.");
+      }
+
+      // Récupérer la liste des ordres du jour (assumée comme un champ 'ordreDuJour')
+      List<dynamic> ordresDuJour = reunionDoc['ordreDuJour'] ?? [];
+
+      // Transformer en List<String>
+      return List<String>.from(ordresDuJour);
+    } catch (e) {
+      print("Erreur lors de la récupération des ordres du jour : $e");
+      throw e;
+    }
+  }
+
+
 
 }

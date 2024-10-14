@@ -1,15 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
+import 'package:gwele/Models/Client.dart';
+import 'package:gwele/Models/Facture.dart';
+import 'package:gwele/Services/FactureService.dart';
 import 'package:intl/intl.dart';
 
-import '../../Models/Facture.dart';
-import '../../Services/FactureService.dart';
-import '../../Colors.dart';
-
 class AjoutFacture extends StatefulWidget {
-  final String clientId;
+  final Client client;
 
-  AjoutFacture({required this.clientId});
+  AjoutFacture({required this.client});
 
   @override
   _AjoutFactureState createState() => _AjoutFactureState();
@@ -50,7 +49,7 @@ class _AjoutFactureState extends State<AjoutFacture> {
         // Création de la facture avec le numéro saisi par l'utilisateur
         Facture facture = Facture(
           id: '',
-          clientId: widget.clientId,
+          clientId: widget.client.id,
           numeroFacture: _numeroFactureController.text, // Numéro de facture saisi par l'utilisateur
           description: _descriptionController.text,
           montant: double.parse(_montantController.text),
@@ -59,10 +58,13 @@ class _AjoutFactureState extends State<AjoutFacture> {
         );
 
         // Enregistrement dans Firestore
-        await _factureService.ajouterFacture(facture);
+        await _factureService.ajouterFacture(facture, widget.client);
 
         // Retour à l'écran précédent après succès
         Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Facture ajoutée avec succès')),
+        );
       } catch (e) {
         setState(() {
           _isSaving = false;
@@ -141,10 +143,10 @@ class _AjoutFactureState extends State<AjoutFacture> {
               ),
               SizedBox(height: 24),
               _isSaving
-                  ? Center(child: CircularProgressIndicator(color: primaryColor))
+                  ? const Center(child: CircularProgressIndicator(color: primaryColor))
                   : ElevatedButton(
                 onPressed: _saveFacture,
-                child: Text('Enregistrer'),
+                child: const Text('Enregistrer'),
               ),
             ],
           ),

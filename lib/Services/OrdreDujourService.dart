@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../Models/OrdreDuJour.dart'; // Assurez-vous d'avoir un modèle OrdreDuJour défini
+import 'package:gwele/Models/OrdreDuJour.dart';
 
 class OrdreDuJourService {
   final CollectionReference ordreDuJourCollection =
@@ -73,7 +72,7 @@ class OrdreDuJourService {
 
 
   // Fonction pour récupérer un ordre du jour par ID
-  Future<OrdreDuJour?> getOrdreDuJourById(String id) async {
+  Future<OrdreDuJour?> ordreDuJourParId(String id) async {
     try {
       // Récupérer le document par ID
       DocumentSnapshot docSnapshot = await ordreDuJourCollection.doc(id).get();

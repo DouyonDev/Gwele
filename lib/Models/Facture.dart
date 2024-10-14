@@ -9,6 +9,7 @@ class Facture {
   DateTime dateEmission;
   DateTime dateEcheance;
   bool estPaye;
+  List<String> idPaiements; // Liste des IDs de paiements associés
 
   Facture({
     required this.id,
@@ -19,7 +20,8 @@ class Facture {
     required this.dateEmission,
     required this.dateEcheance,
     this.estPaye = false,
-  });
+    List<String>? idPaiements, // Paramètre optionnel
+  }) : idPaiements = idPaiements ?? []; // Initialise la liste
 
   factory Facture.fromMap(Map<String, dynamic> data, String documentId) {
     return Facture(
@@ -31,6 +33,7 @@ class Facture {
       dateEmission: (data['dateEmission'] as Timestamp).toDate(),
       dateEcheance: (data['dateEcheance'] as Timestamp).toDate(),
       estPaye: data['estPaye'] ?? false,
+      idPaiements: List<String>.from(data['idPaiements'] ?? []), // Récupère la liste des IDs de paiements
     );
   }
 
@@ -43,6 +46,7 @@ class Facture {
       'dateEmission': dateEmission,
       'dateEcheance': dateEcheance,
       'estPaye': estPaye,
+      'idPaiements': idPaiements, // Inclut la liste des IDs de paiements
     };
   }
 }

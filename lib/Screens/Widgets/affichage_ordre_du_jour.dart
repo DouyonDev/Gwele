@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/OrdreDuJour.dart';
-import 'package:gwele/Services/UtilsService.dart';
-
-import '../../Models/Offre.dart';
-import '../details_offres.dart';
 
 class AffichageOrdreDuJour extends StatelessWidget {
   final OrdreDuJour ordreDuJour;

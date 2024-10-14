@@ -7,6 +7,7 @@ class Equipe {
   String? secondId; // ID du second (peut être nul)
   String managerId;
   List<String> membres; // Liste des IDs des membres de l'équipe
+  List<String> reunions; // Liste des IDs des réunions
   DateTime? dateCreation; // Date de création de l'équipe
 
   // Constructeur
@@ -17,6 +18,7 @@ class Equipe {
     this.secondId,
     required this.managerId,
     required this.membres,
+    required this.reunions, // Initialisation des réunions
     this.dateCreation,
   });
 
@@ -29,6 +31,7 @@ class Equipe {
       secondId: data['secondId'], // Peut être null
       managerId: data['managerId'] ?? '', // Valeur par défaut si le champ n'existe pas
       membres: data['membres'] != null ? List<String>.from(data['membres']) : [], // Si pas de membres, retourne une liste vide
+      reunions: data['reunions'] != null ? List<String>.from(data['reunions']) : [], // Si pas de réunions, retourne une liste vide
       dateCreation: data['dateCreation'] != null
           ? (data['dateCreation'] as Timestamp).toDate()
           : null, // Conversion Timestamp Firestore en DateTime
@@ -43,6 +46,7 @@ class Equipe {
       'secondId': secondId,
       'managerId': managerId,
       'membres': membres,
+      'reunions': reunions, // Ajout des réunions
       'dateCreation': dateCreation != null ? Timestamp.fromDate(dateCreation!) : null,
     };
   }

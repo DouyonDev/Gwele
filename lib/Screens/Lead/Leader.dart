@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:gwele/Screens/Lead/les_reunions.dart';
 import 'package:gwele/Screens/Participant/mes_Offres.dart';
 import 'package:gwele/Screens/Participant/mes_taches.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
@@ -17,7 +18,7 @@ class LeaderState extends State<Leader> {
 
   // Liste des widgets pour chaque page
   static final List<Widget> _pages = <Widget>[
-    Profil(),
+    LesReunionsLeader(),
     MesTaches(),
     MesOffres(),
     Profil(),

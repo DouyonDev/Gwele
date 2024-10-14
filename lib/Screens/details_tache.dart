@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Screens/Widgets/user_info_widget.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
 import 'package:gwele/Services/UtilsService.dart';
 
@@ -98,13 +99,19 @@ class DetailTache extends StatelessWidget {
                 color: secondaryColor,
               ),
             ),
-            Text(
-              'Responsable : ${tacheInfo ?? 'Non spécifiée'}',
-              style: const TextStyle(
-                fontSize: 12.0,
-                color: secondaryColor,
-              ),
-            ),
+            Row(
+              children: [
+                const Text(
+                  'Responsable : ',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: secondaryColor,
+                  ),
+                ),
+                UserInfoWidget(userId : tacheInfo.assigneA),
+              ],
+            )
+
           ],
         ),
         const SizedBox(height: 8.0),

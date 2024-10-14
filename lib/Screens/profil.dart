@@ -68,8 +68,8 @@ class Profil extends StatelessWidget {
                       CircleAvatar(
                         radius: 40.0,
                         backgroundImage: data['imageUrl'] != null
-                            ? NetworkImage(data['imageUrl'])  // Utiliser NetworkImage pour les images depuis Firebase Storage
-                            : const AssetImage('assets/images/boy.png') as ImageProvider,
+                            ? NetworkImage(data['imageUrl']) as ImageProvider  // Utiliser NetworkImage pour les images depuis Firebase Storage
+                            : const AssetImage('assets/images/boy.png'),
                       ),
                       const SizedBox(width: 16.0),
                       Expanded(
