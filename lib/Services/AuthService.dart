@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Screens/Comptable/Comptable.dart';
 import 'package:gwele/Screens/Lead/Leader.dart';
 
-import '../Models/Utilisateur.dart';
 import '../Screens/Admin/Admin.dart';
 import '../Screens/Manager/Manager.dart';
 import '../Screens/Participant/Participant.dart';

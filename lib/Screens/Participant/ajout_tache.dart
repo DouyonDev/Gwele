@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Tache.dart';
 import 'package:gwele/Services/TacheService.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gwele/Services/UtilisateurService.dart';
-import '../../Colors.dart';
 
 class AjoutTache extends StatefulWidget {
   @override

@@ -5,15 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:gwele/Models/Client.dart';
+import 'package:gwele/Models/Equipe.dart';
+import 'package:gwele/Models/Reunion.dart';
+import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Screens/Widgets/ajout_ordre_du_jour.dart';
 import 'package:gwele/Screens/Widgets/message_modale_erreur.dart';
 import 'package:gwele/Services/ClientService.dart';
 import 'package:gwele/Services/NotificationService.dart';
 
-import '../Models/Client.dart';
-import '../Models/Equipe.dart';
-import '../Models/Reunion.dart';
-import '../Models/Utilisateur.dart';
 import '../Screens/Widgets/message_modale.dart';
 import 'AuthService.dart';
 import 'EquipeService.dart';
@@ -156,7 +156,7 @@ class BoutonService {
       formKey.currentState?.save();
       try {
         // Récupérer l'ID du formateur connecté
-        final adminId = FirebaseAuth.instance.currentUser?.uid;
+        final comptableId = FirebaseAuth.instance.currentUser?.uid;
 
         ClientService().ajouterClient(client);
 

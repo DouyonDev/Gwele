@@ -5,8 +5,8 @@ import 'package:gwele/Screens/Participant/mes_Offres.dart';
 import 'package:gwele/Screens/Participant/mes_reunions.dart';
 import 'package:gwele/Screens/Participant/mes_taches.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
+import 'package:gwele/Screens/profil.dart';
 
-import '../profil.dart';
 
 class Participant extends StatefulWidget {
   @override

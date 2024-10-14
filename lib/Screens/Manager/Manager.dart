@@ -5,10 +5,9 @@ import 'package:gwele/Screens/Lead/les_reunions.dart';
 import 'package:gwele/Screens/Manager/mes_comptables.dart';
 import 'package:gwele/Screens/Manager/mes_equipes.dart';
 import 'package:gwele/Screens/Manager/side_menu_manager_widget.dart';
-import '../dashbord/util/responsive.dart';
-import '../dashbord/widgets/side_menu_widget.dart';
-import '../dashbord/widgets/summary_widget.dart';
-import '../profil.dart';
+import 'package:gwele/Screens/dashbord/util/responsive.dart';
+import 'package:gwele/Screens/dashbord/widgets/summary_widget.dart';
+import 'package:gwele/Screens/profil.dart';
 
 class Manager extends StatefulWidget {
   @override

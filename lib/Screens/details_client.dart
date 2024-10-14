@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
-import 'package:gwele/Models/Utilisateur.dart';
-import 'package:gwele/Services/UtilisateurService.dart';
-import 'package:gwele/Services/UtilsService.dart';
+import 'package:gwele/Models/Client.dart';
+import 'package:gwele/Models/Facture.dart';
+import 'package:gwele/Screens/Comptable/ajout_facture.dart';
+import 'package:gwele/Services/FactureService.dart';
 
-import '../Models/Tache.dart';
+class DetailClient extends StatelessWidget {
+  final Client clientInfo;
 
-class DetailTache extends StatelessWidget {
-  final Tache tacheInfo;
-
-  const DetailTache({Key? key, required this.tacheInfo}) : super(key: key);
+  const DetailClient({Key? key, required this.clientInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +17,7 @@ class DetailTache extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         title: const Text(
-          'Détails de la tâche',
+          'Les informations du client',
           style: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,
@@ -38,7 +37,7 @@ class DetailTache extends StatelessWidget {
                     blocStyle(_buildFirstBlock()),
                     const SizedBox(height: 20),
                     // Deuxième Bloc: Liste des ordres du jour
-                    blocStyle(_buildDescriptionBlock()),
+                    blocStyle(_buildFactureBlock(context)),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -57,7 +56,7 @@ class DetailTache extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          tacheInfo.titre ?? 'Sans titre',
+          '${clientInfo.prenom} ${clientInfo.nom}',
           style: const TextStyle(
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -69,7 +68,7 @@ class DetailTache extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Date d\'écheance : ${tacheInfo.dateLimite != null ? UtilsService().formatDate(DateTime.parse(tacheInfo.dateLimite.toString())) : 'Date non disponible'}',
+              'Téléphone : ${clientInfo.telephone}',
               style: const TextStyle(
                 fontSize: 12.0,
                 color: Colors.grey,
@@ -78,7 +77,7 @@ class DetailTache extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Statut : ${tacheInfo.statut ?? 'Statut inconnu'}',
+              'Adresse : ${clientInfo.adresse ?? 'non renseigné'}',
               style: const TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
@@ -92,14 +91,7 @@ class DetailTache extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Priorité : ${tacheInfo.priorite ?? 'Non spécifiée'}',
-              style: const TextStyle(
-                fontSize: 12.0,
-                color: secondaryColor,
-              ),
-            ),
-            Text(
-              'Responsable : ${tacheInfo ?? 'Non spécifiée'}',
+              'Email : ${clientInfo.email ?? 'Non spécifiée'}',
               style: const TextStyle(
                 fontSize: 12.0,
                 color: secondaryColor,
@@ -112,24 +104,70 @@ class DetailTache extends StatelessWidget {
     );
   }
 
-  // Deuxième Bloc: Liste des ordres du jour
-  Widget _buildDescriptionBlock() {
+  // Deuxième Bloc: Liste des factures
+  Widget _buildFactureBlock(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Description :',
-          style: TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Les factures :',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ElevatedButton(
+                onPressed: () {
+
+                  Navigator.push(
+                      context,
+                  MaterialPageRoute(
+                  builder: (context) => AjoutFacture(clientId: clientInfo.id,)));
+                },
+                child: const Text("Ajouter une facture"),
+            )
+          ],
         ),
         const SizedBox(height: 10),
-        Text(
-          tacheInfo.description ?? 'Non spécifiée',
-          style: const TextStyle(
-            fontSize: 12.0,
-          ),
+        Column(
+          children: clientInfo.idFactures.map((participantID) {
+            return FutureBuilder<Facture?>(
+              future: FactureService().factureParId(participantID),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const ListTile(
+                    leading: CircularProgressIndicator(),
+                    title: Text('Chargement...'),
+                  );
+                } else if (snapshot.hasError) {
+                  return const ListTile(
+                    leading: Icon(Icons.error),
+                    title: Text('Erreur lors du chargement de la facture'),
+                  );
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const ListTile(
+                    leading: Icon(Icons.money),
+                    title: Text('Pas de facture'),
+                  );
+                } else {
+                  Facture? facture = snapshot.data;
+                  return ListTile(
+                    leading: const Icon(Icons.money),
+                    title: Text(facture?.numeroFacture ?? 'Inconnu'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.remove_circle_outline),
+                      onPressed: () {
+
+                      },
+                    ),
+                  );
+                }
+              },
+            );
+          }).toList(),
         ),
       ],
     );

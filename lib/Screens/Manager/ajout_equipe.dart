@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
+import 'package:gwele/Models/Equipe.dart';
 import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Screens/Widgets/affichage_boutons_selection_participant.dart';
+import 'package:gwele/Services/BoutonService.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
 
-import '../../Colors.dart';
-import '../../Models/Equipe.dart';
-import '../../Services/BoutonService.dart';
-import '../Widgets/affichage_boutons_selection_participant.dart';
 
 class AjoutEquipe extends StatefulWidget {
   @override

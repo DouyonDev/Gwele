@@ -22,7 +22,7 @@ class FactureService {
   }
 
   // Récupérer une facture par son ID
-  Future<Facture?> getFactureById(String id) async {
+  Future<Facture?> factureParId(String id) async {
     try {
       DocumentSnapshot doc = await facturesCollection.doc(id).get();
       if (doc.exists) {

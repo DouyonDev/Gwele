@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:gwele/Screens/Participant/mes_Offres.dart';
-import 'package:gwele/Screens/Participant/mes_reunions.dart';
 import 'package:gwele/Screens/Participant/mes_taches.dart';
 import 'package:gwele/Screens/dashbord/const/constant.dart';
 

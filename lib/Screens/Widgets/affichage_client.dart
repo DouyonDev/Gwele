@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Client.dart';
+import 'package:gwele/Screens/details_client.dart';
 import 'package:gwele/Services/UtilsService.dart';
 
 import '../../Models/Offre.dart';
@@ -16,12 +17,12 @@ class AffichageClient extends StatelessWidget {
     return GestureDetector(
       onTap: () {
 
-        /*Navigator.push(
+        Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailOffre( : clientData,),
+            builder: (context) => DetailClient( clientInfo: clientData,),
           ),
-        );*/
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),

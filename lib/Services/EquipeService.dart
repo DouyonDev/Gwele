@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../Models/Equipe.dart';
+import 'package:gwele/Models/Equipe.dart';
 
 class EquipeService {
   final CollectionReference equipeCollection =

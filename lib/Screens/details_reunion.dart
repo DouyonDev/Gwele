@@ -14,10 +14,8 @@ import 'package:gwele/Services/TacheService.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
 import 'package:gwele/Services/UtilsService.dart';
 
-import '../Services/BoutonService.dart';
 import '../Services/ReunionService.dart';
 import 'Lead/ajout_tache_reunion.dart';
-import 'Widgets/affichage_boutons_selection_participant.dart';
 
 class DetailReunion extends StatefulWidget {
   final Reunion reunionInfo;

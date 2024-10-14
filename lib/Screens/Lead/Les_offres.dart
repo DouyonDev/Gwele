@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
+import 'package:gwele/Models/Offre.dart';
 import 'package:gwele/Screens/Participant/ajout_offre.dart';
+import 'package:gwele/Screens/Widgets/AppBarListPage.dart';
 import 'package:gwele/Screens/Widgets/affichage_offre.dart';
+import 'package:gwele/Screens/Widgets/boutons_filtre.dart';
 
-import '../../Colors.dart';
-import '../../Models/Offre.dart';
-import '../Widgets/AppBarListPage.dart';
-import '../widgets/boutons_filtre.dart';
+
 
 class LesOffres extends StatefulWidget {
   @override

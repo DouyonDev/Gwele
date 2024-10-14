@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Models/Reunion.dart';
 
-import '../Models/Reunion.dart';
 
 class ReunionService {
   final CollectionReference reunionCollection =

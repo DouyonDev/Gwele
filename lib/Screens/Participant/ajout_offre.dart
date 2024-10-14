@@ -1,13 +1,13 @@
 import 'dart:io';
+import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Offre.dart';
+import 'package:gwele/Services/BoutonService.dart';
 import 'package:gwele/Services/FichiersService.dart';
+import 'package:gwele/Services/OffreService.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../../Colors.dart';
-import '../../Services/BoutonService.dart';
-import '../../Services/OffreService.dart';
 
 class AjoutOffre extends StatefulWidget {
   @override
@@ -219,7 +219,7 @@ class _AjoutOffreState extends State<AjoutOffre> {
                         print(nouvelleOffre.documents);
                         OffreService().ajouterOffre(nouvelleOffre);
 
-                        //_formKey.currentState!.reset();
+                        _formKey.currentState!.reset();
                       },
                       child: const Text('Ajouter l\'offre'),
                     ),

@@ -7,8 +7,6 @@ import 'package:gwele/Screens/Manager/ajout_Membre.dart';
 import 'package:gwele/Services/EquipeService.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
 
-import '../Widgets/affichage_boutons_selection_participant.dart';
-
 class DetailEquipe extends StatefulWidget {
   final Equipe equipeInfo;
 

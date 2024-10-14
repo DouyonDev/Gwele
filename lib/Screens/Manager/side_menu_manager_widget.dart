@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
 
-import '../../../Colors.dart';
 
 class SideMenuManagerWidget extends StatefulWidget {
   final Function(int) onItemSelected; // Callback pour notifier le changement de page

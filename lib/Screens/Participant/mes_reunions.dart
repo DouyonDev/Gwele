@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
+import 'package:gwele/Screens/Participant/mes_reunions_calendar.dart';
+import 'package:gwele/Screens/Widgets/affichage_reunion.dart';
+import 'package:gwele/Screens/Widgets/boutons_filtre.dart';
 
-import '../../Colors.dart';
-import '../widgets/affichage_reunion.dart';
-import '../widgets/boutons_filtre.dart';
-import 'mes_reunions_calendar.dart';
 
 class MesReunions extends StatefulWidget {
   @override

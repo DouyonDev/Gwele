@@ -1,5 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
+import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Screens/Widgets/affichage_boutons_selection_participant.dart';
+import 'package:gwele/Screens/Widgets/message_modale.dart';
 import 'package:gwele/Services/ReunionService.dart';
 import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,10 +12,6 @@ import 'package:gwele/Services/FichiersService.dart';
 import 'package:gwele/Services/UtilsService.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
 import 'package:gwele/Services/BoutonService.dart';
-import '../../Colors.dart';
-import '../../Models/Utilisateur.dart';
-import '../Widgets/affichage_boutons_selection_participant.dart';
-import '../Widgets/message_modale.dart';
 
 class ModifierReunion extends StatefulWidget {
   final Reunion reunion;
