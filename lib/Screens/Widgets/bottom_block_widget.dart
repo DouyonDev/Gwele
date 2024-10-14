@@ -7,6 +7,8 @@ import 'package:gwele/Screens/Lead/ModifierReunion.dart'; // Importez la page de
 import 'package:gwele/Services/AuthService.dart';
 import 'package:gwele/Services/FichiersService.dart';
 
+import '../commentaires_reunion.dart';
+
 class BottomBlockReunion extends StatefulWidget {
   final Reunion reunionInfo;
 

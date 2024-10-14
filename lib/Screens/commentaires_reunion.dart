@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gwele/Colors.dart';
+import 'package:gwele/Models/Commentaire.dart';
 import 'package:gwele/Models/Reunion.dart';
+import 'package:gwele/Screens/Widgets/affichage_commentaire.dart';
+import 'package:gwele/Services/AuthService.dart';
+import 'package:gwele/Services/CommentaireService.dart';
 import 'package:gwele/Services/ReunionService.dart';
 
 class CommentairesReunion extends StatefulWidget {
@@ -15,7 +20,7 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
   final TextEditingController _commentaireController = TextEditingController();
   String? _selectedOrdreDuJour;
   List<String> _ordresDuJour = [];
-  List<Map<String, String>> _commentaires = []; // Liste des commentaires à récupérer depuis la base
+  List<Commentaire> _commentaires = []; // Liste des commentaires à récupérer depuis la base
 
   @override
   void initState() {
@@ -32,24 +37,31 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
     });
   }
 
-  // Récupérer la liste des commentaires depuis la base
-  void LesCommentaires() async {
-    List<Map<String, String>> commentaires = await CommentairesService().getCommentaires(widget.reunion.id);
-    setState(() {
-      _commentaires = commentaires;
+  void LesCommentaires() {
+    // On écoute les changements en temps réel sur les commentaires de la réunion
+    CommentaireService().obtenirCommentaires(widget.reunion.id).listen((commentaires) {
+      setState(() {
+        _commentaires = commentaires;
+      });
     });
   }
 
+
   // Fonction pour ajouter un commentaire
-  void _ajouterCommentaire() {
-    if (_selectedOrdreDuJour != null && _commentaireController.text.isNotEmpty) {
-      CommentairesService().ajouterCommentaire(
-        reunionId: widget.reunion.id,
-        ordreDuJour: _selectedOrdreDuJour!,
-        commentaire: _commentaireController.text,
+  Future<void> _ajouterCommentaire()  async {
+    String? auteurId = await AuthService().idUtilisateurConnecte();
+    if (_commentaireController.text.isNotEmpty) {
+      Commentaire commentaire = Commentaire(
+          id: '',
+          reunionId: widget.reunion.id,
+          auteurId: auteurId!,
+          ordreDuJour: _selectedOrdreDuJour!,
+          contenu: _commentaireController.text,
+          dateCommentaire: DateTime.now()
       );
+      CommentaireService().ajouterCommentaire(commentaire);
       _commentaireController.clear();
-      _fetchCommentaires(); // Actualiser la liste des commentaires
+      LesCommentaires(); // Actualiser la liste des commentaires
     }
   }
 
@@ -63,13 +75,42 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
         children: [
           // Liste des commentaires
           Expanded(
-            child: ListView.builder(
-              itemCount: _commentaires.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_commentaires[index]['ordreDuJour'] ?? ''),
-                  subtitle: Text(_commentaires[index]['commentaire'] ?? ''),
+            child: StreamBuilder<List<Commentaire>>(
+              stream: CommentaireService().obtenirCommentaires(widget.reunion.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(color: primaryColor,));
+                }
+                if (snapshot.hasError) {
+                  return const Center(
+                      child: Text(
+                        'Erreur lors de la récupération des commentaires.',
+                        style: TextStyle(
+                          color: secondaryColor,
+                        ),
+                      )
+                  );
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                      child: Text(
+                        'Aucun commentaire trouvé.',
+                        style: TextStyle(
+                          color: secondaryColor,
+                        ),
+                      )
+                  );
+                }
+
+                return ListView(
+                  children: snapshot.data!.map((commentaire) {
+                    // Ici, snapshot.data est déjà une liste de Commentaire
+                    return AffichageCommentaire(commentaireData: commentaire); // Passe directement l'objet Commentaire
+                  }).toList(),
                 );
+
+
+
               },
             ),
           ),
