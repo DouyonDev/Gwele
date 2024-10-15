@@ -4,6 +4,7 @@ import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Screens/Widgets/affichage_boutons_selection_participant.dart';
 import 'package:gwele/Screens/Widgets/message_modale.dart';
+import 'package:gwele/Screens/Widgets/ordre_du_jour_list.dart';
 import 'package:gwele/Services/ReunionService.dart';
 import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -418,30 +419,7 @@ class _ModifierReunionState extends State<ModifierReunion> {
           ],
         ),
         const SizedBox(height: 10),
-        _ordreDuJour.isNotEmpty
-            ? ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _ordreDuJour.length,
-          itemBuilder: (context, index) {
-            String ordreDuJour = _ordreDuJour[index];
-            return ListTile(
-              title: Text(ordreDuJour),
-              trailing: IconButton(
-                icon: const Icon(Icons.remove_circle_outline),
-                onPressed: () {
-                  setState(() {
-                    _ordreDuJour.removeAt(index);
-                  });
-                },
-              ),
-            );
-          },
-        )
-            : const Text(
-          'Aucun ordre du jour ajouté.',
-          style: TextStyle(color: Colors.grey),
-        ),
+        OrdreDuJourList(ordreDuJourIDs: _ordreDuJour),
       ],
     );
   }

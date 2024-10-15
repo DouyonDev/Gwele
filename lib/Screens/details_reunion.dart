@@ -12,6 +12,7 @@ import 'package:gwele/Screens/Lead/ajout_tache_reunion.dart';
 import 'package:gwele/Screens/Widgets/FirstBlockReunion.dart';
 import 'package:gwele/Screens/Widgets/bottom_block_widget.dart';
 import 'package:gwele/Screens/Widgets/message_modale.dart';
+import 'package:gwele/Screens/Widgets/ordre_du_jour_list.dart';
 import 'package:gwele/Services/AuthService.dart';
 import 'package:gwele/Services/FichiersService.dart';
 import 'package:gwele/Services/OrdreDuJourService.dart';
@@ -100,43 +101,7 @@ class DetailReunionState extends State<DetailReunion> {
           ),
         ),
         const SizedBox(height: 10),
-        Column(
-          children: widget.reunionInfo.ordreDuJour.map((ordreDuJourID) {
-            return FutureBuilder<OrdreDuJour?>(
-              future: OrdreDuJourService().ordreDuJourParId(ordreDuJourID),//.ordreDuJourParId(paiementID),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const ListTile(
-                    leading: CircularProgressIndicator(),
-                    title: Text('Chargement...'),
-                  );
-                } else if (snapshot.hasError) {
-                  return const ListTile(
-                    leading: Icon(Icons.error),
-                    title: Text('Erreur lors du chargement de l\'ordre du jour'),
-                  );
-                } else if (!snapshot.hasData || snapshot.data == null) {
-                  return const ListTile(
-                    leading: Icon(Icons.money),
-                    title: Text('Pas d\'ordre du jour'),
-                  );
-                } else {
-                  OrdreDuJour? ordreDuJour = snapshot.data;
-                  return ListTile(
-                    leading: const Icon(Icons.money),
-                    title: Text(ordreDuJour?.titre ?? 'Sans titre'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: () {
-                        // Logique pour supprimer la facture
-                      },
-                    ),
-                  );
-                }
-              },
-            );
-          }).toList(),
-        ),
+        OrdreDuJourList(ordreDuJourIDs: widget.reunionInfo.ordreDuJour),
       ],
     );
   }
