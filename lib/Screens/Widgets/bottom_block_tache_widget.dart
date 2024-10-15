@@ -2,25 +2,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
-import 'package:gwele/Models/Reunion.dart';
-import 'package:gwele/Screens/Lead/ModifierReunion.dart';
+import 'package:gwele/Models/Tache.dart';
 import 'package:gwele/Services/AuthService.dart';
 import 'package:gwele/Services/FichiersService.dart';
+import 'package:gwele/Services/ReunionService.dart';
 
-import '../../Services/ReunionService.dart';
-import '../commentaires_reunion.dart';
 import 'confirmation_dialog.dart';
 
-class BottomBlockReunion extends StatefulWidget {
-  final Reunion reunionInfo;
 
-  const BottomBlockReunion({Key? key, required this.reunionInfo}) : super(key: key);
+class BottomBlockTache extends StatefulWidget {
+  final Tache tacheInfo;
+
+  const BottomBlockTache({Key? key, required this.tacheInfo}) : super(key: key);
 
   @override
-  _BottomBlockReunionState createState() => _BottomBlockReunionState();
+  _BottomBlockTacheState createState() => _BottomBlockTacheState();
 }
 
-class _BottomBlockReunionState extends State<BottomBlockReunion> {
+class _BottomBlockTacheState extends State<BottomBlockTache> {
   String? userId;
 
   @override
@@ -34,7 +33,7 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
     return Row(
       children: [
         _buildUploadButton(),
-        if (widget.reunionInfo.lead == userId) _buildLeadButtons(),
+        if (widget.tacheInfo.assigneA == userId) _buildLeadButtons(),
         _buildCommentButton(),
         _buildActionButtons(),
       ],
@@ -43,7 +42,7 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
 
   // Bouton pour envoyer un document
   Widget _buildUploadButton() {
-    return widget.reunionInfo.statut != "Archivee"
+    return widget.tacheInfo.statut != "Archivee"
         ? Tooltip(
       message: "Envoyer un document",
       child: IconButton(
@@ -75,18 +74,18 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
           child: IconButton(
             icon: const Icon(Icons.edit, color: Colors.blue),
             onPressed: () {
-              if (widget.reunionInfo.statut != "Terminee") {
+              if (widget.tacheInfo.statut != "Terminee") {/*
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ModifierReunion(reunion: widget.reunionInfo),
+                    builder: (context) => ModifierReunion(reunion: widget.tacheInfo),
                   ),
-                );
+                );*/
               }
             },
           ),
         ),
-        if (widget.reunionInfo.statut == "En attente")
+        if (widget.tacheInfo.statut == "En attente")
           Tooltip(
             message: "Supprimer la réunion",
             child: IconButton(
@@ -98,7 +97,7 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
                       title: 'Suppression de la réunion',
                       content: 'Voulez-vous supprimer cette réunion ?',
                       onConfirm: () {
-                        ReunionService().supprimerReunion(widget.reunionInfo.id);
+                        ReunionService().supprimerReunion(widget.tacheInfo.id);
                         Navigator.pop(context);
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -125,13 +124,13 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
       message: "Voir les commentaires",
       child: IconButton(
         icon: const Icon(Icons.comment, color: Colors.green),
-        onPressed: () {
+        onPressed: () {/*
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CommentairesReunion(reunion: widget.reunionInfo),
+              builder: (context) => CommentairesReunion(reunion: widget.tacheInfo),
             ),
-          );
+          );*/
         },
       ),
     );
@@ -139,7 +138,7 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
 
   // Boutons d'action (démarrer, arrêter, générer)
   Widget _buildActionButtons() {
-    if (widget.reunionInfo.statut == "En attente" && widget.reunionInfo.lead == userId) {
+    if (widget.tacheInfo.statut == "En attente" && widget.tacheInfo.assigneA == userId) {
       return Tooltip(
         message: "Démarrer la réunion",
         child: IconButton(
@@ -150,7 +149,7 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
           },
         ),
       );
-    } else if (widget.reunionInfo.statut == "En cours" && widget.reunionInfo.lead == userId) {
+    } else if (widget.tacheInfo.statut == "En cours" && widget.tacheInfo.assigneA == userId) {
       return Row(
         children: [
           Tooltip(

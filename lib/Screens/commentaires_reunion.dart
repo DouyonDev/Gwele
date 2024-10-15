@@ -116,7 +116,6 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
               },
             ),
           ),
-          const Divider(),
           // Section pour ajouter un commentaire
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -153,6 +152,13 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
                 const SizedBox(height: 8.0),
                 // Bouton pour soumettre le commentaire
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    textStyle: const TextStyle(fontSize: 20),
+                    foregroundColor: Colors.white,
+                    backgroundColor: primaryColor,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                  ),
                   onPressed: _ajouterCommentaire,
                   child: const Text('Envoyer le commentaire'),
                 ),

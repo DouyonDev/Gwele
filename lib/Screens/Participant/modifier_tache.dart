@@ -3,21 +3,24 @@ import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Tache.dart';
 import 'package:gwele/Screens/Widgets/user_info_widget.dart';
 import 'package:gwele/Services/TacheService.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class AjoutTache extends StatefulWidget {
+class ModifierTache extends StatefulWidget {
+  final Tache tache; // La tâche à modifier
+
+  const ModifierTache({Key? key, required this.tache}) : super(key: key);
+
   @override
-  _AjoutTacheState createState() => _AjoutTacheState();
+  _ModifierTacheState createState() => _ModifierTacheState();
 }
 
-class _AjoutTacheState extends State<AjoutTache> {
+class _ModifierTacheState extends State<ModifierTache> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String _titre = '';
-  String _description = '';
-  DateTime _dateLimite = DateTime.now(); // Date initialisée à maintenant
+  late String _titre;
+  late String _description;
+  late DateTime _dateLimite;
   String _priorite = 'moyenne';
   String _assigneA = ''; // Id de l'utilisateur assigné
   List<DocumentSnapshot> _participants = []; // Liste des participants
@@ -27,6 +30,11 @@ class _AjoutTacheState extends State<AjoutTache> {
   @override
   void initState() {
     super.initState();
+    _titre = widget.tache.titre ?? '';
+    _description = widget.tache.description ?? '';
+    _dateLimite = widget.tache.dateLimite ?? DateTime.now();
+    _priorite = widget.tache.priorite ?? 'moyenne';
+    _assigneA = widget.tache.assigneA; // Assigné à l'utilisateur sélectionné
     _fetchUserRole(); // Récupérer le rôle de l'utilisateur
   }
 
@@ -45,8 +53,6 @@ class _AjoutTacheState extends State<AjoutTache> {
 
       if (_userRole == 'ADMIN' || _userRole == 'MANAGER' || _userRole == 'LEAD') {
         _fetchParticipants(); // Charger les participants seulement si nécessaire
-      } else {
-        _assigneA = currentUser.uid; // Si l'utilisateur n'est pas ADMIN, MANAGER ou LEAD, il est automatiquement assigné
       }
     }
   }
@@ -74,24 +80,24 @@ class _AjoutTacheState extends State<AjoutTache> {
     }
   }
 
-  // Fonction pour soumettre la tâche
+  // Fonction pour soumettre la modification de la tâche
   void _submitTask() {
     _formKey.currentState!.save();
 
-    Tache nouvelleTache = Tache(
+    Tache tacheModifiee = Tache(
       titre: _titre,
       description: _description,
       dateLimite: _dateLimite,
-      statut: 'En attente',
-      id: '',
-      assignePar: FirebaseAuth.instance.currentUser?.uid ?? '',
-      assigneA: _assigneA, // Assigné à l'utilisateur sélectionné ou lui-même
+      statut: widget.tache.statut, // Garder le même statut
+      id: widget.tache.id, // Utiliser l'ID de la tâche existante
+      assignePar: widget.tache.assignePar, // Garder le même assigné par
+      assigneA: _assigneA, // Assigné à l'utilisateur sélectionné
       priorite: _priorite,
-      commentaires: [],
+      commentaires: widget.tache.commentaires, // Garder les commentaires
     );
 
-    // Appel au service d'ajout de la tâche
-    TacheService().ajouterTache(nouvelleTache);
+    // Appel au service de mise à jour de la tâche
+    TacheService().mettreAJourTache(tacheModifiee);
 
     _formKey.currentState!.reset();
     Navigator.pop(context); // Retourner à l'écran précédent
@@ -110,19 +116,16 @@ class _AjoutTacheState extends State<AjoutTache> {
             Navigator.pop(context);
           },
         ),
+        title: const Text("Modifier la tâche"),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: <Widget>[
-              Image.asset(
-                "assets/images/logoGwele.png",
-                height: 150,
-              ),
               const SizedBox(height: 30),
               const Text(
-                "Ajout d'une tâche",
+                "Modifier une tâche",
                 style: TextStyle(
                   fontSize: 24,
                   color: primaryColor,
@@ -135,7 +138,7 @@ class _AjoutTacheState extends State<AjoutTache> {
                   children: <Widget>[
                     // Titre
                     TextFormField(
-                      key: const ValueKey('titre'),
+                      initialValue: _titre,
                       decoration: const InputDecoration(
                         labelText: 'Titre de la tâche',
                         labelStyle: TextStyle(color: Color(0xffA6A6A6)),
@@ -152,7 +155,7 @@ class _AjoutTacheState extends State<AjoutTache> {
 
                     // Description
                     TextFormField(
-                      key: const ValueKey('description'),
+                      initialValue: _description,
                       decoration: const InputDecoration(
                         labelText: 'Description',
                         labelStyle: TextStyle(color: Color(0xffA6A6A6)),
@@ -202,11 +205,12 @@ class _AjoutTacheState extends State<AjoutTache> {
                     // Afficher le bouton pour assigner à un membre uniquement si le rôle le permet
                     if (_userRole == 'ADMIN' || _userRole == 'MANAGER' || _userRole == 'LEAD')
                       DropdownButtonFormField<String>(
+                        value: _assigneA,
                         decoration: const InputDecoration(labelText: 'Assigner à'),
                         items: _participants.map((participant) {
                           return DropdownMenuItem(
                             value: participant.id,
-                            child: UserInfoWidget(userId: participant.id, size: 15),
+                            child: UserInfoWidget(userId: participant.id, size: 15), // Afficher le nom de l'utilisateur
                           );
                         }).toList(),
                         onChanged: (value) {
@@ -224,7 +228,14 @@ class _AjoutTacheState extends State<AjoutTache> {
                     // Bouton soumettre
                     ElevatedButton(
                       onPressed: _submitTask,
-                      child: const Text('Ajouter'),
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 20),
+                        foregroundColor: Colors.white,
+                        backgroundColor: primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                      ),
+                      child: const Text('Modifier'),
                     ),
                   ],
                 ),
