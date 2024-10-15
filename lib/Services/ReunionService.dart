@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Models/Reunion.dart';
+import 'package:gwele/Models/Utilisateur.dart';
+import 'package:gwele/Services/push_notification_service.dart';
+
+import 'UtilisateurService.dart';
 
 
 class ReunionService {
@@ -16,12 +20,27 @@ class ReunionService {
       // Mise à jour de l'objet Reunion avec l'ID généré
       reunion.id = docRef.id;
 
-      //print('Reunion ajoutée avec succès avec l\'ID: ${reunion.id}');
+      // Boucle pour envoyer une notification à chaque participant
+      for (var participant in reunion.participants) {
+        Utilisateur? participantInfo = await UtilisateurService().utilisateurParId(participant);
+        // Boucle pour envoyer une notification à chaque participant
+        await PushNotificationService.sendNotification(
+          title: "Nouvelle réunion",
+          body: "Vous êtes invité(e) à une nouvelle réunion",
+          token: participantInfo!.notificationToken, // Assurez-vous que chaque participant a un tokenFirebase
+          contextType: "reunion",
+          contextData: reunion.id, // Utilisation de l'ID de la réunion comme contextData
+        );
+      }
+
+      print('Reunion ajoutée avec succès avec l\'ID: ${reunion.id}');
+      print('Notifications envoyées à tous les participants');
     } catch (e) {
-      print('Erreur lors de l\'ajout de la réunion: $e');
+      print('Erreur lors de l\'ajout de la réunion ou de l\'envoi des notifications: $e');
       throw e; // Relance l'erreur pour être gérée au niveau supérieur
     }
   }
+
 
 
   // Récupérer une liste de réunions

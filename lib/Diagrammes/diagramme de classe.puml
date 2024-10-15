@@ -1,0 +1,108 @@
+@startuml
+class Tache {
+  +id : String
+  +titre : String
+  +description : String
+  +assigneA : Utilisateur
+  +dateLimite : Date
+  +statut : String
+  +priorite : String
+  +commentaires : List<Commentaire>
+  +documents : List<String>
+}
+
+class Reunion {
+  +id : String
+  +titre : String
+  +description : String
+  +dateReunion : Date
+  +participants : List<Utilisateur>
+  +lieu : String
+  +isCompleted : Boolean
+  +lead : Utilisateur
+  +decisions : String
+  +tachesAssignees : List<Tache>
+}
+
+class Utilisateur {
+  +id : String
+  +nom : String
+  +prenom : String
+  +role : String
+  +email : String
+  +tachesAssignees : List<Tache>
+  +reunions : List<Reunion>
+}
+
+class Offre {
+  +id : String
+  +titre : String
+  +description : String
+  +dateLimite : Date
+  +statut : String
+  +documents : List<String>
+  +soumisPar : Utilisateur
+  +isExpired : Boolean
+}
+
+class Client {
+  +id : String
+  +nom : String
+  +factures : List<Facture>
+}
+
+class Commentaire {
+  +id : String
+  +contenu : String
+  +auteur : Utilisateur
+  +date : Date
+}
+
+class Equipe {
+  +id : String
+  +leader : Utilisateur
+  +second : Utilisateur
+  +membres : List<Utilisateur>
+  +reunions : List<Reunion>
+  +managerId : String
+}
+
+class Facture {
+  +id : String
+  +clientId : String
+  +numeroFacture : String
+  +montant : Float
+  +dateEmission : Date
+  +dateEcheance : Date
+  +paiements : List<Paiement>
+}
+
+class OrdreDuJour {
+  +id : String
+  +titre : String
+  +description : String
+  +statut : String
+  +decisions : String
+}
+
+class Paiement {
+  +id : String
+  +montant : Float
+  +date : Date
+  +methodePaiement : String
+  +factureId : String
+}
+
+' Relations entre les classes
+Reunion "1" -- "*" Tache
+Reunion "1" -- "*" Utilisateur : participants
+Reunion "1" -- "*" OrdreDuJour : ordreDuJour
+
+Tache "*" -- "1" Utilisateur : assigné à
+Commentaire "*" -- "1" Utilisateur : auteur
+Utilisateur "*" -- "1" Equipe : appartient à
+
+Offre "1" -- "1" Utilisateur : soumisPar
+Facture "1" -- "*" Paiement : paiements
+Facture "*" -- "1" Client : factures
+@enduml

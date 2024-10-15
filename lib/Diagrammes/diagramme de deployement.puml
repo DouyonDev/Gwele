@@ -1,0 +1,26 @@
+@startuml
+node "Firebase" {
+    rectangle "Authentication" as Auth
+    rectangle "Firestore Database" as DB
+    rectangle "Cloud Storage" as Storage
+    rectangle "Cloud Functions" as Functions
+    rectangle "Firebase Cloud Messaging (FCM)" as FCM
+    rectangle "App Check" as AppCheck
+}
+
+node "Frontend" {
+    node "Flutter Web" as Web
+    node "Flutter Mobile" as Mobile
+}
+
+Web --> Auth : Authentification
+Web --> DB : Lire/Écrire des données
+Web --> Storage : Télécharger/Accéder aux fichiers
+Web --> FCM : Recevoir des notifications
+
+Mobile --> Auth : Authentification
+Mobile --> DB : Lire/Écrire des données
+Mobile --> Storage : Télécharger/Accéder aux fichiers
+Mobile --> FCM : Recevoir des notifications
+
+@enduml
