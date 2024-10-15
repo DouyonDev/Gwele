@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Commentaire.dart';
+import 'package:gwele/Screens/Widgets/user_info_widget.dart';
+import 'package:gwele/Services/UtilsService.dart';
 
 class AffichageCommentaire extends StatelessWidget {
   final Commentaire commentaireData;
@@ -24,29 +25,54 @@ class AffichageCommentaire extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
+            color: Color(0xFFFAF0E6), // Couleur de fond
+            borderRadius: BorderRadius.circular(20), // Bordure arrondie
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.black.withOpacity(0.1),
                 spreadRadius: 2,
                 blurRadius: 5,
-                offset: const Offset(0, 3),
+                offset: Offset(0, 3), // Décalage de l'ombre
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                commentaireData.contenu ?? 'Sans titre',
-                style: const TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: secondaryColor,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    UserInfoWidget(userId : commentaireData.auteurId, size: 20,),
+                    Text(
+                      UtilsService().formatDate(commentaireData.dateCommentaire),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ]
                 ),
-              ),
-            ],
+                Text(
+                  commentaireData.ordreDuJour!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  commentaireData.contenu,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+
+              ]
+
+            ),
           ),
         ),
       ),

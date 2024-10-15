@@ -108,7 +108,7 @@ class DetailTache extends StatelessWidget {
                     color: secondaryColor,
                   ),
                 ),
-                UserInfoWidget(userId : tacheInfo.assigneA),
+                UserInfoWidget(userId : tacheInfo.assigneA,size: 10,),
               ],
             )
 

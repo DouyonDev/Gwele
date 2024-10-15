@@ -4,8 +4,9 @@ import 'package:gwele/Services/UtilisateurService.dart';
 
 class UserInfoWidget extends StatelessWidget {
   final String userId;
+  final double size;
 
-  const UserInfoWidget({Key? key, required this.userId}) : super(key: key);
+  const UserInfoWidget({Key? key, required this.userId, required this.size}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +37,17 @@ class UserInfoWidget extends StatelessWidget {
               backgroundImage: avatarUrl.isNotEmpty
                   ? NetworkImage(avatarUrl) as ImageProvider
                   : const AssetImage('assets/images/boy.png'), // Avatar par défaut si l'URL est vide
-              radius: 10,
+              radius: size,
             ),
             const SizedBox(width: 10),
             // Prénom et nom de l'utilisateur
             Text(
               firstName,
-              style: const TextStyle(fontSize: 10),
+              style: TextStyle(fontSize: size),
             ),
             Text(
               lastName,
-              style: const TextStyle(fontSize: 10),
+              style: TextStyle(fontSize: size),
             ),
           ],
         );

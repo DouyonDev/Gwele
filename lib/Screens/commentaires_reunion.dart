@@ -55,7 +55,7 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
           id: '',
           reunionId: widget.reunion.id,
           auteurId: auteurId!,
-          ordreDuJour: _selectedOrdreDuJour!,
+          ordreDuJour: _selectedOrdreDuJour,
           contenu: _commentaireController.text,
           dateCommentaire: DateTime.now()
       );
@@ -68,7 +68,9 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: backgroundColor,
         title: const Text('Commentaires sur la réunion'),
       ),
       body: Column(
@@ -125,7 +127,7 @@ class _CommentairesReunionState extends State<CommentairesReunion> {
                 DropdownButton<String>(
                   isExpanded: true,
                   value: _selectedOrdreDuJour,
-                  hint: const Text("Sélectionner l'ordre du jour"),
+                  hint: const Text("Sélectionner l'ordre du jour (facultatif)"),
                   items: _ordresDuJour.map((ordre) {
                     return DropdownMenuItem<String>(
                       value: ordre,

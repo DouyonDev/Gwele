@@ -2,7 +2,7 @@ class Commentaire {
   String id;
   String reunionId; // Lien avec la réunion
   String auteurId; // ID de l'auteur du commentaire
-  String ordreDuJour; // L'ordre du jour concerné par le commentaire
+  String? ordreDuJour; // L'ordre du jour concerné par le commentaire
   String contenu; // Le contenu du commentaire
   DateTime dateCommentaire; // Date du commentaire
 
