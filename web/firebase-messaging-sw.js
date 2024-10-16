@@ -13,12 +13,16 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// Ajoutez votre clé VAPID ici
+const messaging = firebase.messaging();
+messaging.usePublicVapidKey("BMvfL_wZ9rnjGXPuzAHEWIBUTlaHB6xU4n_mGdGlTkhxY0wRlci6HMAhXP9sNYzk8e898FEQMWyNtfomf4nAzeM");
+
 messaging.onBackgroundMessage(function(payload) {
-    console.log('Received background message ', payload);
+    console.log('Message en arrière-plan reçu ', payload);
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        //icon: '/firebase-logo.png'  // Vérifiez l'existence du fichier
+        //icon: '/firebase-logo.png'  // Vérifiez que le fichier existe
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);

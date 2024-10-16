@@ -7,6 +7,7 @@ import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Screens/Comptable/Comptable.dart';
 import 'package:gwele/Screens/Lead/Leader.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
+import 'package:gwele/Services/push_notification_service.dart';
 
 import '../Screens/Admin/Admin.dart';
 import '../Screens/Manager/Manager.dart';
@@ -90,10 +91,26 @@ class AuthService {
           );
         }
 
-        // Récupérer le token de notification
-        String? tokenMessaging = await FirebaseMessaging.instance.getToken();
-        utilisateur.notificationToken = tokenMessaging.toString();
-        UtilisateurService().mettreAJourUtilisateur(utilisateur);
+        FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+        // Demander la permission (si nécessaire)
+        await messaging.requestPermission();
+
+
+        //String vapidKey = "BJrdGqugU_00AC1_Tq3Jv_ki4Rkk9Mv0ZZ1n9CGoFX2tHP5KgCab3sTOVMG5DHBdG-8VmqAJvlSY04WPG1kT7co";
+
+        // Obtenir le token
+        String? token = await messaging.getToken();
+        print("Token FCM: $token");
+
+        // Assurez-vous que le token n'est pas nul avant de l'utiliser
+        if (token != null) {
+          utilisateur.notificationToken = token;
+          UtilisateurService().mettreAJourUtilisateur(utilisateur);
+        } else {
+          print("Erreur: Le token FCM est nul");
+        }
+
 
         return utilisateur;
       } else {

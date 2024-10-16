@@ -56,6 +56,7 @@ class UtilisateurService {
         'email': utilisateur.email,
         'tachesAssignees': utilisateur.tachesAssignees,
         'reunions': utilisateur.reunions,
+        'notificationToken': utilisateur.notificationToken,
       });
     } catch (e) {
       print('Erreur lors de la mise à jour de l\'utilisateur: $e');

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../Colors.dart';
-import '../Services/BoutonService.dart';
+import 'package:gwele/Colors.dart';
+import 'package:gwele/Services/BoutonService.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,8 +15,6 @@ class LoginScreenState extends State<LoginScreen> {
   String _password = '';
   bool _obscureText = true;
 
-  // Appel du service d'authentification
-  final BoutonService boutonService = BoutonService();
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +110,7 @@ class LoginScreenState extends State<LoginScreen> {
                           _formKey.currentState!.save();
 
                           // Appel au service pour soumettre le formulaire
-                          boutonService.boutonConnexion(
+                          BoutonService().boutonConnexion(
                             _formKey,
                             _email,
                             _password,
