@@ -97,20 +97,28 @@ class AuthService {
         await messaging.requestPermission();
 
 
-        //String vapidKey = "BJrdGqugU_00AC1_Tq3Jv_ki4Rkk9Mv0ZZ1n9CGoFX2tHP5KgCab3sTOVMG5DHBdG-8VmqAJvlSY04WPG1kT7co";
+        String vapidKey = "BMvfL_wZ9rnjGXPuzAHEWIBUTlaHB6xU4n_mGdGlTkhxY0wRlci6HMAhXP9sNYzk8e898FEQMWyNtfomf4nAzeM";
 
         // Obtenir le token
-        String? token = await messaging.getToken();
-        print("Token FCM: $token");
 
-        // Assurez-vous que le token n'est pas nul avant de l'utiliser
-        if (token != null) {
-          utilisateur.notificationToken = token;
-          UtilisateurService().mettreAJourUtilisateur(utilisateur);
-        } else {
-          print("Erreur: Le token FCM est nul");
+        try {
+          String? token = await messaging.getToken(vapidKey: vapidKey);
+          if (token != null) {
+            print("Token FCM: $token");
+
+            // Assurez-vous que le token n'est pas nul avant de l'utiliser
+            if (token != null) {
+              utilisateur.notificationToken = token;
+              UtilisateurService().mettreAJourUtilisateur(utilisateur);
+            } else {
+              print("Erreur: Le token FCM est nul");
+            }
+          } else {
+            print("Token non généré");
+          }
+        } catch (e) {
+          print("Erreur lors de la génération du token : $e");
         }
-
 
         return utilisateur;
       } else {

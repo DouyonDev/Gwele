@@ -41,7 +41,7 @@ class PushNotificationService {
     client.close(); // Fermer le client
 
     return credentials.accessToken.data;
-  }
+    }
 
   // Fonction pour envoyer la notification
   static Future<void> sendNotification({

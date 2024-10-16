@@ -45,7 +45,7 @@ void requestPermission() async {
 
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
-    announcement: false,
+    announcement: true,
     badge: true,
     sound: true,
   );

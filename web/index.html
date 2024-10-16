@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <!-- Base href -->
   <base href="$FLUTTER_BASE_HREF">
@@ -22,9 +22,9 @@
 
   <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js"></script>
-  <!--
+
   <script>
-    // Your web app's Firebase configuration
+    // Configurer Firebase
     var firebaseConfig = {
       apiKey: "AIzaSyDSq2o1nRu3ao4VSeKYIz3sfm9mrHfZWEk",
       authDomain: "gwele-33e7f.firebaseapp.com",
@@ -35,19 +35,23 @@
       measurementId: "G-Y8R1PJ52FZ"
     };
 
-    // Initialize Firebase
+    // Initialiser Firebase
     firebase.initializeApp(firebaseConfig);
-  </script>-->
-  <script src="/firebase-messaging-sw.js"></script>
+  </script>
 
-  <!-- Ajout du script pour enregistrer le Service Worker -->
+  <script src="firebase-messaging-sw.js"></script>
+
+  <!-- Enregistrement du Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('firebase-messaging-sw.js')
-              .then(function(registration) {
-                console.log('Service Worker enregistré avec succès:', registration);
-              }).catch(function(error) {
-        console.error('Erreur lors de l\'enregistrement du Service Worker:', error);
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('firebase-messaging-sw.js', {
+          scope: '/firebase-cloud-messaging-push-scope',
+        }).then(function(registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+        }).catch(function(err) {
+          console.error('Service Worker registration failed:', err);
+        });
       });
     }
   </script>
