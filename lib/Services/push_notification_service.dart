@@ -2,7 +2,6 @@ import 'dart:convert'; // Import pour jsonEncode
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:googleapis_auth/auth_io.dart' as auth;
-import 'package:provider/provider.dart';
 
 class PushNotificationService {
 

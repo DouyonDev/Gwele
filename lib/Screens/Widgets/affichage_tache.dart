@@ -1,14 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
-import 'package:gwele/Models/Reunion.dart';
-import 'package:gwele/Screens/Participant/mes_taches.dart';
-import 'package:gwele/Screens/Widgets/AfficherOrdresDuJourParReunionWidget.dart';
-import 'package:gwele/Screens/details_reunion.dart';
+import 'package:gwele/Models/Tache.dart';
 import 'package:gwele/Screens/details_tache.dart';
 import 'package:gwele/Services/UtilsService.dart';
 
-import '../../Models/Tache.dart';
 
 class AffichageTache extends StatelessWidget {
   final Tache tacheData;

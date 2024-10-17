@@ -88,6 +88,22 @@ class ReunionService {
     }
   }
 
+  // Méthode pour obtenir la liste des réunions
+  Future<List<Reunion>> obtenirLesReunions() async {
+    try {
+      // Récupérer la collection 'reunions'
+      QuerySnapshot snapshot = await reunionCollection.get();
+
+      // Convertir les documents en instances de Reunion
+      return snapshot.docs.map((doc) {
+        return Reunion.fromDocument(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+    } catch (e) {
+      print("Erreur lors de la récupération des réunions: $e");
+      return []; // Retourne une liste vide en cas d'erreur
+    }
+  }
+
 // Fonction pour convertir une chaîne "HH:mm" en TimeOfDay
   TimeOfDay _parseTimeOfDay(String time) {
     final format = time.split(":");

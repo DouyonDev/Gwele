@@ -21,3 +21,5 @@ const MaterialColor customBlue = MaterialColor(
     900: Color(0xFF0D47A1),
   },
 );
+
+const defaultPadding = 20.0;

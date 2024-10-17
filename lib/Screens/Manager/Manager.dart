@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Screens/Lead/Les_offres.dart';
 import 'package:gwele/Screens/Lead/Les_taches.dart';
-import 'package:gwele/Screens/Lead/les_reunions.dart';
 import 'package:gwele/Screens/Manager/les_reunions_manager.dart';
 import 'package:gwele/Screens/Manager/mes_comptables.dart';
 import 'package:gwele/Screens/Manager/mes_equipes.dart';
 import 'package:gwele/Screens/Manager/side_menu_manager_widget.dart';
+import 'package:gwele/Screens/Widgets/Statistiques/screens/ReunionCharts.dart';
 import 'package:gwele/Screens/dashbord/util/responsive.dart';
-import 'package:gwele/Screens/dashbord/widgets/summary_widget.dart';
 import 'package:gwele/Screens/profil.dart';
 
 class Manager extends StatefulWidget {
@@ -66,7 +65,7 @@ class ManagerState extends State<Manager> {
       endDrawer: Responsive.isMobile(context)
           ? SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
-        child: const SummaryWidget(),
+        child: const ReunionCharts(),
       )
           : null,
       body: SafeArea(
@@ -86,7 +85,7 @@ class ManagerState extends State<Manager> {
             if (isDesktop)
               const Expanded(
                 flex: 3,
-                child: SummaryWidget(),  // Panneau de résumé à droite sur Desktop
+                child: ReunionCharts(),  // Panneau de résumé à droite sur Desktop
               ),
           ],
         ),
