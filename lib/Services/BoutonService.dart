@@ -189,28 +189,6 @@ class BoutonService {
 
       //final user = FirebaseAuth.instance.currentUser;
       nouvelleReunion.lead = (await AuthService().idUtilisateurConnecte())!;
-/*
-      print("lead");
-      print(nouvelleReunion.lead);
-      print("titre");
-      print(nouvelleReunion.titre);
-      print("lieu");
-      print(nouvelleReunion.lieu);
-      print("description");
-      print(nouvelleReunion.description);
-      print("dateReunion");
-      print(nouvelleReunion.dateReunion);
-      print("participants");
-      print(nouvelleReunion.participants);
-      print("isCompleted");
-      print(nouvelleReunion.isCompleted);
-      print("lieu");
-      print(nouvelleReunion.lieu);
-      print("heureDebut");
-      print(nouvelleReunion.heureDebut);
-      print("heureFin");
-      print(nouvelleReunion.heureFin);
-*/
       // Appel au service pour ajouter la réunion
       try {
         await reunionService.ajouterReunion(nouvelleReunion, context);
@@ -225,13 +203,7 @@ class BoutonService {
         );
 
         // Récupérer les tokens de notification à partir de la liste des participants
-        List<String> notificationTokens = await NotificationService().getNotificationTokens(nouvelleReunion.participants);
-        // Envoyer les notifications aux participants
-        /*NotificationService().sendNotification(
-          'Nouvelle réunion',
-          'Une nouvelle réunion a été ajoutée !',
-          notificationTokens, // Utiliser la liste des tokens pour envoyer les notifications
-        );*/
+        //List<String> notificationTokens = await NotificationService().getNotificationTokens(nouvelleReunion.participants);
       } catch (e) {
         await showDialog(
           context: context,

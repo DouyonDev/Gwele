@@ -5,6 +5,7 @@ import 'package:gwele/Screens/Widgets/message_modale.dart';
 import 'package:gwele/Services/AuthService.dart';
 import 'package:gwele/Services/BoutonService.dart';
 import 'package:gwele/Services/FichiersService.dart';
+import 'package:gwele/Services/ListeParticipantsService.dart';
 import 'package:gwele/Services/UtilsService.dart';
 import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,48 +33,6 @@ class _AjoutReunionState extends State<AjoutReunion> {
   List<String> documents = [];
   List<File> fichiersSelectionnes = [];
 
-  Future<QuerySnapshot> listeParticipantPourReunion() async {
-    final currentUserId = await AuthService().idUtilisateurConnecte();
-
-    if (currentUserId == null) {
-      throw Exception("Aucun utilisateur connecté");
-    }
-
-    Utilisateur? currentUserInfo = await UtilisateurService().utilisateurParId(currentUserId);
-    if (currentUserInfo == null) {
-      throw Exception("L'utilisateur connecté n'existe pas dans la base de données");
-    }
-
-    final String role = currentUserInfo.role ?? '';
-
-    if (role == 'MANAGER') {
-      return await FirebaseFirestore.instance
-          .collection('utilisateurs')
-          .where('userMere', isEqualTo: currentUserId)
-          .get();
-    } else if (role == 'MEMBRE') {
-      final QuerySnapshot equipesQuery = await FirebaseFirestore.instance
-          .collection('equipes')
-          .where('leaderId', isEqualTo: currentUserId)
-          .get();
-
-      if (equipesQuery.docs.isEmpty) {
-        throw Exception("Aucune équipe trouvée pour ce leader");
-      }
-
-      final List<dynamic> membresIds = equipesQuery.docs.first['membres'];
-      if (membresIds.isEmpty) {
-        throw Exception("L'équipe n'a pas de membres");
-      }
-
-      return await FirebaseFirestore.instance
-          .collection('utilisateurs')
-          .where(FieldPath.documentId, whereIn: membresIds)
-          .get();
-    } else {
-      throw Exception("Rôle non géré : $role");
-    }
-  }
 
   void onParticipantSelected(String participantID) async {
     try {
@@ -345,7 +304,7 @@ class _AjoutReunionState extends State<AjoutReunion> {
                 buttonText: 'Ajouter',
                 onParticipantSelected: onParticipantSelected,
                 setState: () => setState(() {}),
-                fetchParticipants: listeParticipantPourReunion,
+                fetchParticipants: ListeParticipantsService().listeMembresEquipe,
               ),
             ),
           ],

@@ -3,13 +3,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
+import 'package:gwele/Models/Utilisateur.dart';
 import 'package:gwele/Screens/Lead/ModifierReunion.dart';
+import 'package:gwele/Screens/Widgets/affichage_boutons_selection_participant.dart';
+import 'package:gwele/Screens/Widgets/confirmation_dialog.dart';
+import 'package:gwele/Screens/Widgets/message_modale.dart';
+import 'package:gwele/Screens/commentaires_reunion.dart';
 import 'package:gwele/Services/AuthService.dart';
 import 'package:gwele/Services/FichiersService.dart';
+import 'package:gwele/Services/ListeParticipantsService.dart';
+import 'package:gwele/Services/ReunionService.dart';
+import 'package:gwele/Services/UtilisateurService.dart';
+import 'package:gwele/Services/push_notification_service.dart';
 
-import '../../Services/ReunionService.dart';
-import '../commentaires_reunion.dart';
-import 'confirmation_dialog.dart';
 
 class BottomBlockReunion extends StatefulWidget {
   final Reunion reunionInfo;
@@ -140,15 +146,12 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
   // Boutons d'action (démarrer, arrêter, générer)
   Widget _buildActionButtons() {
     if (widget.reunionInfo.statut == "En attente" && widget.reunionInfo.lead == userId) {
-      return Tooltip(
-        message: "Démarrer la réunion",
-        child: IconButton(
-          icon: const Icon(Icons.play_arrow, color: Colors.green),
-          onPressed: () {
-            // Logique pour démarrer la réunion
-            print('Réunion démarrée');
-          },
-        ),
+      return AffichageBoutonSelectionParticipant(
+        title: 'Séléctionner le rapporteur de la réunion',
+        buttonText: 'Démarrer la réunion',
+        onParticipantSelected: onParticipantSelected,
+        setState: () => setState(() {}),
+        fetchParticipants: () => ListeParticipantsService().listeParticipantsPourReunion(widget.reunionInfo.id),
       );
     } else if (widget.reunionInfo.statut == "En cours" && widget.reunionInfo.lead == userId) {
       return Row(
@@ -158,7 +161,28 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
             child: IconButton(
               icon: const Icon(Icons.stop, color: Colors.red),
               onPressed: () {
-                // Logique pour arrêter la réunion
+                showDialog(context: context,
+                  builder: (BuildContext context) {
+                    return ConfirmationDialog(
+                        title: "Démande d'arrêt de la réunion",
+                        content: "Voulez-vous arrêter cette réunion ?",
+                        onConfirm: () {
+                          widget.reunionInfo.statut = "Terminer";
+                          ReunionService().mettreAJourReunion(widget.reunionInfo);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          setState(() {
+                            this.widget.reunionInfo.statut = "Terminer";
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Reunion arrêtée')),
+                          );
+                        },
+                        onCancel: () {
+                          Navigator.pop(context);
+                        });
+                  },
+                );
                 print('Réunion arrêtée');
               },
             ),
@@ -177,5 +201,58 @@ class _BottomBlockReunionState extends State<BottomBlockReunion> {
       );
     }
     return const SizedBox.shrink();
+  }
+
+  void onParticipantSelected(String participantID) async {
+    try {
+      Utilisateur? utilisateur = await UtilisateurService().utilisateurParId(participantID);
+      if (utilisateur != null) {
+        widget.reunionInfo.rapporteur = participantID;
+
+        widget.reunionInfo.statut = "En cours";
+        ReunionService().mettreAJourReunion(widget.reunionInfo);
+        print(widget.reunionInfo.statut);
+        Utilisateur? rapporteurInfo = await UtilisateurService().utilisateurParId(participantID);
+        await PushNotificationService.sendNotification(
+          title: widget.reunionInfo.titre,
+          body: "Vous avez été choisie comme rapporteur de la réunion sur : ${widget.reunionInfo.titre}",
+          token: rapporteurInfo!.notificationToken, // Assurez-vous que chaque participant a un tokenFirebase
+          contextType: "reunion",
+          contextData: widget.reunionInfo.id, // Utilisation de l'ID de la réunion comme contextData
+        );
+
+        // Boucle pour envoyer une notification à chaque participant
+        for (var participant in widget.reunionInfo.participants) {
+          Utilisateur? participantInfo = await UtilisateurService().utilisateurParId(participant);
+          // Boucle pour envoyer une notification à chaque participant
+          await PushNotificationService.sendNotification(
+            title: "Démarrage de la réunion",
+            body: "La réunion sur ${widget.reunionInfo.titre} est demarrée",
+            token: participantInfo!.notificationToken, // Assurez-vous que chaque participant a un tokenFirebase
+            contextType: "reunion",
+            contextData: widget.reunionInfo.id, // Utilisation de l'ID de la réunion comme contextData
+          );
+        }
+        showDialog(context: context,
+          builder: (BuildContext context) {
+            return const MessageModale(
+                title: "Démarrage de la réunion",
+                content: "Votre réunion est demarrée. Les utilisateurs seront notifiés.",);
+          },
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(' ${utilisateur.prenom} ${utilisateur.nom} est le rapporteur de la réunion')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Utilisateur non trouvé')),
+        );
+      }
+    } catch (e) {
+      print('Erreur lors de la sélection du rapporteur: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la récupération du rapporteur')),
+      );
+    }
   }
 }

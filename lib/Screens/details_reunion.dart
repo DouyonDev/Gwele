@@ -1,25 +1,17 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
-import 'package:gwele/Models/OrdreDuJour.dart';
 import 'package:gwele/Models/Reunion.dart';
 import 'package:gwele/Models/Tache.dart';
 import 'package:gwele/Models/Utilisateur.dart';
-import 'package:gwele/Screens/Lead/ModifierReunion.dart';
-import 'package:gwele/Screens/Lead/ajout_tache_reunion.dart';
+import 'package:gwele/Screens/Participant/RapporteurForm.dart';
 import 'package:gwele/Screens/Widgets/FirstBlockReunion.dart';
 import 'package:gwele/Screens/Widgets/bottom_block_widget.dart';
-import 'package:gwele/Screens/Widgets/message_modale.dart';
 import 'package:gwele/Screens/Widgets/ordre_du_jour_list.dart';
 import 'package:gwele/Services/AuthService.dart';
-import 'package:gwele/Services/FichiersService.dart';
-import 'package:gwele/Services/OrdreDuJourService.dart';
-import 'package:gwele/Services/ReunionService.dart';
 import 'package:gwele/Services/TacheService.dart';
 import 'package:gwele/Services/UtilisateurService.dart';
-import 'package:gwele/Services/UtilsService.dart';
 
 class DetailReunion extends StatefulWidget {
   final Reunion reunionInfo;
@@ -55,6 +47,8 @@ class DetailReunionState extends State<DetailReunion> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    if(widget.reunionInfo.rapporteur == AuthService().idUtilisateurConnect() && widget.reunionInfo.statut == "En cours")
+                      blocStyle(RapporteurForm(ordresDuJour: widget.reunionInfo.ordreDuJour, onSubmit: (String ordreDuJour, String notes, String decisions, List<String> tachesAssignees) {  },)),
                     // Premier Bloc: Titre, Date, Statut, Heure, Salle
                     blocStyle(FirstBlockReunion(reunionInfo: widget.reunionInfo)),
                     const SizedBox(height: 20),

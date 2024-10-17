@@ -4,7 +4,6 @@ import '../Participant/mes_Offres.dart';
 import '../Participant/mes_reunions.dart';
 import '../Participant/mes_taches.dart';
 import '../dashbord/util/responsive.dart';
-import '../dashbord/widgets/side_menu_widget.dart';
 import '../dashbord/widgets/summary_widget.dart';
 import '../profil.dart';
 import 'Les_clients.dart';
