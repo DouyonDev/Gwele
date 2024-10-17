@@ -33,6 +33,7 @@ class _ChartState extends State<Chart> {
       print("programmer ${programme}");
       print("en cours ${enCours}");
       print("terminer ${termine}");
+      print("les reunions ${reunions?.length}");
     } catch (e) {
       print("Erreur lors de la récupération des données: $e");
     } finally {
