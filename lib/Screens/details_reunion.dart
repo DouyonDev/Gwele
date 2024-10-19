@@ -48,7 +48,8 @@ class DetailReunionState extends State<DetailReunion> {
                 child: Column(
                   children: [
                     if(widget.reunionInfo.rapporteur == AuthService().idUtilisateurConnect() && widget.reunionInfo.statut == "En cours")
-                      blocStyle(RapporteurForm(ordresDuJour: widget.reunionInfo.ordreDuJour, onSubmit: (String ordreDuJour, String notes, String decisions, List<String> tachesAssignees) {  },)),
+                      blocStyle(RapporteurForm(ordresDuJour: widget.reunionInfo.ordreDuJour)),
+                      const SizedBox(height: 20),
                     // Premier Bloc: Titre, Date, Statut, Heure, Salle
                     blocStyle(FirstBlockReunion(reunionInfo: widget.reunionInfo)),
                     const SizedBox(height: 20),
@@ -273,16 +274,7 @@ class DetailReunionState extends State<DetailReunion> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),

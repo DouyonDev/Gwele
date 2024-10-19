@@ -7,17 +7,19 @@ class OrdreDuJourService {
   FirebaseFirestore.instance.collection('ordresDuJour');
 
   // Fonction pour ajouter un ordre du jour
-  Future<void> ajouterOrdreDuJour(OrdreDuJour ordreDuJour, BuildContext context) async {
+  Future<String> ajouterOrdreDuJour(OrdreDuJour ordreDuJour, BuildContext context) async {
     try {
-      // Ajout de l'ordre du jour dans la collection Firestore
+      // Ajout de l'ordre du jour dans Firestore
       DocumentReference docRef = await ordreDuJourCollection.add(ordreDuJour.toMap());
 
-      // Mise à jour de l'objet OrdreDuJour avec l'ID généré
-      ordreDuJour.id = docRef.id; // Si vous avez un champ 'id' dans votre modèle
+      // Mise à jour de l'objet avec l'ID généré
+      ordreDuJour.id = docRef.id;
+
       print('Ordre du jour ajouté avec succès avec l\'ID: ${ordreDuJour.id}');
+      return ordreDuJour.id; // Retourner l'ID généré
     } catch (e) {
       print('Erreur lors de l\'ajout de l\'ordre du jour: $e');
-      throw e; // Relance l'erreur pour être gérée au niveau supérieur
+      throw e;
     }
   }
 
@@ -33,7 +35,8 @@ class OrdreDuJourService {
             titre: data['titre'] ?? 'Sans titre',
             description: data['description'] ?? 'Pas de description',
             statut: data['statut'] ?? 'En attente',
-            decisions: data['decisions'] ?? '', // Par défaut, vide
+            decisionsIds: List<String>.from(data['decisions'] ?? []), // Décisions
+            duree: data['duree'] != null ? Duration(milliseconds: data['duree']) : Duration.zero, // Durée avec valeur par défaut
           );
         }).toList();
       });
@@ -50,7 +53,8 @@ class OrdreDuJourService {
         'titre': ordreDuJour.titre,
         'description': ordreDuJour.description,
         'statut': ordreDuJour.statut,
-        'decisions': ordreDuJour.decisions,
+        'decisions': ordreDuJour.decisionsIds, // Mise à jour des décisions
+        'duree': ordreDuJour.duree?.inMilliseconds, // Durée en millisecondes
       });
       print('Ordre du jour mis à jour avec succès: ${ordreDuJour.id}');
     } catch (e) {
@@ -70,7 +74,6 @@ class OrdreDuJourService {
     }
   }
 
-
   // Fonction pour récupérer un ordre du jour par ID
   Future<OrdreDuJour?> ordreDuJourParId(String id) async {
     try {
@@ -82,7 +85,14 @@ class OrdreDuJourService {
         final data = docSnapshot.data() as Map<String, dynamic>;
 
         // Utiliser la méthode fromMap pour créer l'objet OrdreDuJour
-        return OrdreDuJour.fromMap(data);
+        return OrdreDuJour(
+          id: id,
+          titre: data['titre'],
+          description: data['description'],
+          statut: data['statut'],
+          decisionsIds: List<String>.from(data['decisions'] ?? []),
+          duree: data['duree'] != null ? Duration(milliseconds: data['duree']) : Duration.zero, // Durée avec valeur par défaut
+        );
       } else {
         print('Ordre du jour avec l\'ID $id n\'existe pas.');
         return null; // Retourne null si le document n'existe pas
@@ -92,5 +102,4 @@ class OrdreDuJourService {
       throw e; // Relance l'erreur pour une gestion éventuelle au niveau supérieur
     }
   }
-
 }

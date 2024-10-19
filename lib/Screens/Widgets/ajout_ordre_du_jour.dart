@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/OrdreDuJour.dart';
-import 'package:gwele/Services/OrdreDuJourService.dart'; // Assurez-vous d'importer le service correct
+import 'package:gwele/Services/OrdreDuJourService.dart';
 
 class AjouterOrdreDuJour extends StatefulWidget {
-  final Function(String) onOrdreDuJourAjoute; // Callback pour retourner l'ID
+  final Function(String) onOrdreDuJourAjoute;
 
   const AjouterOrdreDuJour({Key? key, required this.onOrdreDuJourAjoute})
       : super(key: key);
@@ -18,32 +17,27 @@ class _AjouterOrdreDuJourState extends State<AjouterOrdreDuJour> {
   final _formKey = GlobalKey<FormState>();
   String _titre = '';
   String _description = '';
-  String _statut = 'en cours'; // Statut par défaut
+  Duration _duree = const Duration(minutes: 10); // Durée par défaut
 
-  void _submitForm() async {
+  void BtnAjouterOrdreDuJour() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      // Créer un nouvel Ordre du Jour
       OrdreDuJour nouvelOrdre = OrdreDuJour(
-        id: '', // ID sera généré par Firestore
+        id: '',
         titre: _titre,
         description: _description,
-        statut: _statut,
+        statut: 'en cours', // Statut par défaut
+        duree: _duree,
+        decisionsIds: [],
       );
 
-
       try {
-        // Ajouter l'ordre du jour dans Firestore
-        await OrdreDuJourService().ajouterOrdreDuJour(nouvelOrdre, context);
+        String ordreId = await OrdreDuJourService().ajouterOrdreDuJour(nouvelOrdre, context);
 
-        // Appeler le callback pour retourner l'ID
-        widget.onOrdreDuJourAjoute(nouvelOrdre.id);
-
-        // Fermer la boîte de dialogue
+        widget.onOrdreDuJourAjoute(ordreId);
         Navigator.of(context).pop();
       } catch (e) {
-        // Gérer l'erreur ici, par exemple en affichant un message à l'utilisateur
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erreur lors de l\'ajout de l\'ordre du jour: $e')),
         );
@@ -80,21 +74,24 @@ class _AjouterOrdreDuJourState extends State<AjouterOrdreDuJour> {
               },
               onSaved: (value) => _description = value!,
             ),
-            DropdownButtonFormField<String>(
-              value: _statut,
-              decoration: const InputDecoration(labelText: 'Statut'),
-              items: const [
-                DropdownMenuItem(value: 'en cours', child: Text('En cours')),
-                DropdownMenuItem(value: 'terminé', child: Text('Terminé')),
-                DropdownMenuItem(value: 'annulé', child: Text('Annulé')),
+            Row(
+              children: [
+                const Text('Durée:'),
+                Expanded(
+                  child: Slider(
+                    value: _duree.inMinutes.toDouble(),
+                    min: 5,
+                    max: 240,
+                    divisions: 23,
+                    label: '${_duree.inMinutes} minutes',
+                    onChanged: (value) {
+                      setState(() {
+                        _duree = Duration(minutes: value.toInt());
+                      });
+                    },
+                  ),
+                ),
               ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _statut = value;
-                  });
-                }
-              },
             ),
           ],
         ),
@@ -105,12 +102,12 @@ class _AjouterOrdreDuJourState extends State<AjouterOrdreDuJour> {
           child: const Text('Annuler'),
         ),
         ElevatedButton(
-          onPressed: _submitForm,
+          onPressed: BtnAjouterOrdreDuJour,
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
           ),
           child: const Text(
-              'Ajouter',
+            'Ajouter',
             style: TextStyle(color: thirdColor),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gwele/Colors.dart';
+import 'package:gwele/Screens/Widgets/ordre_du_jour_list.dart';
 
 class AfficherOrdresDuJourParReunionWidget extends StatelessWidget {
   final String reunionId; // ID de la réunion pour récupérer l'ordre du jour
@@ -26,14 +27,24 @@ class AfficherOrdresDuJourParReunionWidget extends StatelessWidget {
 
         // Récupération des IDs d'ordres du jour depuis le document de la réunion
         var reunionData = snapshot.data!.data() as Map<String, dynamic>?;
-        List<dynamic>? ordreDuJourIds = reunionData?['ordreDuJour'] as List<dynamic>?;
 
-        if (ordreDuJourIds == null || ordreDuJourIds.isEmpty) {
-          return const Text('Pas d\'ordre du jour pour cette réunion.');
+
+        List<dynamic>? ordreDuJourIdsFromDoc = reunionData?['ordreDuJour'];
+
+        // Vérifie que c'est bien une liste avant de continuer
+        if (ordreDuJourIdsFromDoc is List<dynamic>) {
+          List<String>? ordreDuJourIds = ordreDuJourIdsFromDoc.map((id) => id.toString()).toList();
+
+          if (ordreDuJourIds.isEmpty) {
+            return const Text('Pas d\'ordre du jour pour cette réunion.');
+          }
+
+          return OrdreDuJourList(ordreDuJourIDs: ordreDuJourIds);
+        } else {
+          return const Text('Format des données incorrect.');
         }
 
-        // Si la réunion a des ordres du jour, on affiche une liste
-        return FutureBuilder<List<DocumentSnapshot>>(
+        /*return FutureBuilder<List<DocumentSnapshot>>(
           future: _getOrdresDuJourDetails(ordreDuJourIds),
           builder: (context, ordresSnapshot) {
             if (ordresSnapshot.connectionState == ConnectionState.waiting) {
@@ -68,7 +79,7 @@ class AfficherOrdresDuJourParReunionWidget extends StatelessWidget {
               },
             );
           },
-        );
+        );*/
       },
     );
   }

@@ -4,6 +4,7 @@ import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
 import 'package:gwele/Screens/Widgets/AfficherOrdresDuJourParReunionWidget.dart';
 import 'package:gwele/Screens/details_reunion.dart';
+import 'package:gwele/Services/UtilsService.dart';
 
 class AffichageReunion extends StatelessWidget {
   final Reunion reunionData;
@@ -51,7 +52,7 @@ class AffichageReunion extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                'Date : ${reunionData.dateReunion.hour != null ? (reunionData.dateReunion) : 'Date non disponible'}',
+                'Date : ${reunionData.dateReunion.hour != null ? UtilsService().formatDate(DateTime.parse(reunionData.dateReunion.toString())) : 'Date non disponible'}',
                 style: const TextStyle(
                   fontSize: 16.0,
                   color: Colors.grey,

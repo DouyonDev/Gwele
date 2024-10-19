@@ -21,7 +21,10 @@ class OrdreDuJourList extends StatelessWidget {
               );
             } else if (snapshot.hasError) {
               return const ListTile(
-                leading: Icon(Icons.error),
+                leading: Icon(
+                    Icons.error,
+                    color: Colors.red,
+                ),
                 title: Text('Erreur lors du chargement de l\'ordre du jour'),
               );
             } else if (!snapshot.hasData || snapshot.data == null) {

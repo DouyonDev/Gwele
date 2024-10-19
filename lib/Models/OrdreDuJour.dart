@@ -2,29 +2,29 @@ class OrdreDuJour {
   String id; // UUID
   String titre;
   String description;
-  String statut; // Peut être "en cours", "terminé", "annulé"
-  String decisions;
+  String statut; // "en cours", "terminé", "annulé"
+  Duration duree; // Durée de l'ordre du jour
+  List<String> decisionsIds; // Liste d'IDs des décisions
 
   OrdreDuJour({
     required this.id,
     required this.titre,
     required this.description,
     required this.statut,
-    this.decisions = '',
+    required this.duree,
+    required this.decisionsIds, // Les décisions sont maintenant des IDs
   });
 
-  // Méthode pour convertir l'objet en Map pour Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'titre': titre,
       'description': description,
       'statut': statut,
-      'decisions': decisions,
+      'duree': duree.inMinutes,
+      'decisionsIds': decisionsIds, // Stockage des IDs
     };
   }
-
-  // Méthode pour créer un Ordre du Jour à partir d'une Map
 
   factory OrdreDuJour.fromMap(Map<String, dynamic> map) {
     return OrdreDuJour(
@@ -32,15 +32,8 @@ class OrdreDuJour {
       titre: map['titre'],
       description: map['description'],
       statut: map['statut'],
-      decisions: map['decisions'] ?? '',
+      duree: Duration(minutes: map['duree']),
+      decisionsIds: List<String>.from(map['decisionsIds']), // Récupération des IDs
     );
-  }
-
-  // Méthode pour ajouter une décision à l'ordre du jour
-  void ajouterDecision(String decision) {
-    if (decisions.isNotEmpty) {
-      decisions += ', ';
-    }
-    decisions += decision;
   }
 }

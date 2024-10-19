@@ -1,5 +1,4 @@
-class
-Client {
+class Client {
   String id;
   String prenom;
   String nom;

@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gwele/Models/OrdreDuJour.dart';
+import 'package:gwele/Services/OrdreDuJourService.dart';
 
 class RapporteurForm extends StatefulWidget {
   final List<String> ordresDuJour; // Liste des ordres du jour
-  final Function(String ordreDuJour, String notes, String decisions, List<String> tachesAssignees) onSubmit;
+  //final Function(String ordreDuJour, String notes, String decisions, List<String> tachesAssignees) onSubmit;
 
-  const RapporteurForm({Key? key, required this.ordresDuJour, required this.onSubmit}) : super(key: key);
+  const RapporteurForm({Key? key, required this.ordresDuJour/*, required this.onSubmit*/}) : super(key: key);
 
   @override
   _RapporteurFormState createState() => _RapporteurFormState();
@@ -43,7 +45,20 @@ class _RapporteurFormState extends State<RapporteurForm> {
           items: widget.ordresDuJour.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value),
+              child: FutureBuilder<OrdreDuJour?>(
+                future: OrdreDuJourService().ordreDuJourParId(value),
+                builder: (BuildContext context, AsyncSnapshot<OrdreDuJour?> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(); // Ou n'importe quel indicateur de chargement
+                  } else if (snapshot.hasError) {
+                    return Text('Erreur : ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return Text('Aucun ordre du jour trouvé');
+                  } else {
+                    return Text(snapshot.data!.titre);
+                  }
+                },
+              ),
             );
           }).toList(),
         ),
@@ -96,12 +111,12 @@ class _RapporteurFormState extends State<RapporteurForm> {
           ElevatedButton(
             onPressed: () {
               if (_selectedOrdreDuJour != null) {
-                widget.onSubmit(
+                /*widget.onSubmit(
                   _selectedOrdreDuJour!,
                   _notesController.text,
                   _decisionsController.text,
                   _tachesAssignees,
-                );
+                );*/
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Sélectionnez un ordre du jour')),

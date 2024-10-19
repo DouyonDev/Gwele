@@ -47,7 +47,7 @@ class _MesReunionsState extends State<MesReunions> {
         automaticallyImplyLeading: false,
         //toolbarHeight: 70,
         title: const Text(
-            'Liste des réunions',
+            'Vos Réunions',
         style: TextStyle(
             fontSize: 30,
           fontWeight: FontWeight.bold,

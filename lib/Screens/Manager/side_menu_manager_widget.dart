@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
+import 'package:gwele/Services/BoutonService.dart';
 
 
 class SideMenuManagerWidget extends StatefulWidget {
@@ -83,6 +84,7 @@ class _SideMenuManagerWidgetState extends State<SideMenuManagerWidget> {
             Icon(Icons.exit_to_app),
                 () {
               // Logique de déconnexion
+                  BoutonService().boutonDeconnexion(context);
             },
             isSelected: false, // Déconnexion n'est jamais sélectionnée
           ),

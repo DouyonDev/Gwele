@@ -73,6 +73,12 @@ Future<void> main() async {
     androidProvider: AndroidProvider.debug,
     appleProvider: AppleProvider.appAttest,
   );
+  FirebaseAppCheck.instance.onTokenChange.listen((token) {
+    print("Token App Check: $token");
+  });
+  FirebaseAppCheck.instance.getToken().then((value) {
+    print("Token App Check: $value");
+  });
 
   await AdminService().checkAndCreateAdmin();
 
