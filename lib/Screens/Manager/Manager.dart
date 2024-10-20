@@ -6,8 +6,8 @@ import 'package:gwele/Screens/Manager/mes_comptables.dart';
 import 'package:gwele/Screens/Manager/mes_equipes.dart';
 import 'package:gwele/Screens/Manager/side_menu_manager_widget.dart';
 import 'package:gwele/Screens/Widgets/Statistiques/screens/ReunionCharts.dart';
-import 'package:gwele/Screens/dashbord/util/responsive.dart';
 import 'package:gwele/Screens/profil.dart';
+import 'package:gwele/Screens/utils.dart';
 
 class Manager extends StatefulWidget {
   @override
