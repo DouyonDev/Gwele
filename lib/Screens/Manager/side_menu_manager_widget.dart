@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gwele/Colors.dart';
+import 'package:gwele/Screens/utils.dart';
 import 'package:gwele/Services/BoutonService.dart';
 
 
@@ -30,16 +31,13 @@ class _SideMenuManagerWidgetState extends State<SideMenuManagerWidget> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
+          DrawerHeader(
+            decoration: const BoxDecoration(
               color: primaryColor, // Appliquer la couleur primaire au header
             ),
-            child: Text(
-              'Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+            child: Image.asset(
+              "assets/images/logoGweleBlanc.png", // Chemin vers l'image du logo
+              height: Responsive.isMobile(context) ? 100 : 200, // Hauteur du logo selon le type d'appareil
             ),
           ),
           // Options du drawer avec gestion de la couleur de sélection
