@@ -18,13 +18,13 @@ class ChartData {
         color: const Color(0xFF26E5FF),
         value: total > 0 ? (enCours / total) * 100 : 0,
         showTitle: false,
-        radius: 22,
+        radius: 25,
       ),
       PieChartSectionData(
         color: const Color(0xFFFFCF26),
         value: total > 0 ? (termine / total) * 100 : 0,
         showTitle: false,
-        radius: 19,
+        radius: 25,
       ),
     ];
   }

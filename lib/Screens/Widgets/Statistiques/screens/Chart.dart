@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:gwele/Colors.dart';
 import 'package:gwele/Models/Reunion.dart';
 import 'package:gwele/Screens/Widgets/Statistiques/models/ReunionChartData.dart';
 import 'package:gwele/Screens/Widgets/Statistiques/services/ReunionServiceStat.dart';
@@ -30,10 +31,10 @@ class _ChartState extends State<Chart> {
       programme = await ReunionServiceStat().compterReunionsProgrammer();
       enCours = await ReunionServiceStat().compterReunionsEnCours();
       termine = await ReunionServiceStat().compterReunionsTerminer();
-      print("programmer ${programme}");
-      print("en cours ${enCours}");
-      print("terminer ${termine}");
-      print("les reunions ${reunions?.length}");
+      //print("programmer ${programme}");
+      //print("en cours ${enCours}");
+      //print("terminer ${termine}");
+      //print("les reunions ${reunions?.length}");
     } catch (e) {
       print("Erreur lors de la récupération des données: $e");
     } finally {
@@ -52,7 +53,9 @@ class _ChartState extends State<Chart> {
     final chartData = ChartData();
     final sections = chartData.generateChartData(programme, enCours, termine);
     final total = programme + enCours + termine;
-    final percentage = total > 0 ? ((programme / total) * 100).toStringAsFixed(1) : '0';
+    final percentageProgramme = total > 0 ? ((programme / total) * 100).toStringAsFixed(2) : '0';
+    final percentageEnCours = total > 0 ? ((enCours / total) * 100).toStringAsFixed(2) : '0';
+    final percentageTerminer = total > 0 ? ((termine / total) * 100).toStringAsFixed(2) : '0';
 
     return SizedBox(
       height: 200,
@@ -70,17 +73,32 @@ class _ChartState extends State<Chart> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 8),
                 Text(
-                  "$percentage%",
+                  "$percentageProgramme%",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                    color: primaryColor,
+                    fontWeight: FontWeight.normal,
                     height: 0.5,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text("of 100%"),
+                const SizedBox(height: 10),
+                Text(
+                  "$percentageEnCours%",
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: const Color(0xFF26E5FF),
+                    fontWeight: FontWeight.normal,
+                    height: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "$percentageTerminer%",
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: const Color(0xFFFFCF26),
+                    fontWeight: FontWeight.normal,
+                    height: 0.5,
+                  ),
+                ),
               ],
             ),
           ),

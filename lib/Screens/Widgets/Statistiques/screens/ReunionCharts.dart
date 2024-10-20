@@ -16,15 +16,12 @@ class ReunionCharts extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
               children: [
-                const SizedBox(height: 20),
-                Chart(),
                 const Text(
-                  'Summary',
+                  'Aujourd\'hui',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 16),
-                //SummaryDetails(),
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
+                Chart(),
                 //Scheduled(),
               ],
             ),
